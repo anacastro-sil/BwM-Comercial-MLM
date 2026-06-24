@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BWM Sellers — Plan, Adquisición & Farming</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--y:#FFE600;--b:#009EE3;--g:#00A650;--r:#E23D3D;--o:#F5A623;--bg:#F2F4F7;--w:white;--t:#333;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;}
+body{background:var(--bg);color:var(--t);}
+
+.hdr{background:var(--y);padding:12px 28px;display:flex;align-items:center;gap:12px;}
+.hdr h1{font-size:17px;font-weight:700;} .hdr p{font-size:11px;color:#555;}
+.hdr-r{margin-left:auto;font-size:11px;color:#555;text-align:right;line-height:1.8;}
+.hdr-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+.hdr-badge.dn{background:#E23D3D;color:white;} .hdr-badge.up{background:#00A650;color:white;}
+
+.fbar{background:var(--w);padding:10px 28px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.08);border-bottom:1px solid #e8e8e8;}
+.fg{display:flex;flex-direction:column;gap:3px;}
+.fg label{font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+select{padding:7px 26px 7px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;
+  background:var(--w) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23888'/%3E%3C/svg%3E") no-repeat right 8px center;
+  appearance:none;cursor:pointer;min-width:140px;}
+select:focus{outline:none;border-color:var(--b);}
+.btn{padding:7px 14px;border:1px solid #ddd;border-radius:6px;background:var(--w);font-size:12px;cursor:pointer;color:#666;align-self:flex-end;}
+.btn:hover{background:#f5f5f5;}
+.view-tabs{display:flex;gap:2px;align-self:flex-end;background:#F0F0F0;border-radius:8px;padding:3px;margin-left:auto;}
+.vtab{padding:6px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:#888;border:none;background:transparent;}
+.vtab.active{background:var(--w);color:var(--b);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+
+.krow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:16px 28px;}
+.kc{background:var(--w);border-radius:10px;padding:15px 17px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid var(--b);position:relative;}
+.kc.g{border-color:var(--g);} .kc.r{border-color:var(--r);} .kc.o{border-color:var(--o);} .kc.gr{border-color:#bbb;} .kc.p{border-color:#7C3DB5;}
+.kc .lbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;}
+.kc .val{font-size:26px;font-weight:700;margin:4px 0 2px;line-height:1;}
+.kc .sub{font-size:11px;color:#888;}
+.chip{position:absolute;top:12px;right:12px;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:700;}
+.up{background:#E5F7EE;color:var(--g);} .dn{background:#FDE8E8;color:var(--r);} .fl{background:#EEF4FF;color:#5570D3;} .nt{background:#FEF3E8;color:#C97A20;}
+
+.crow{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;padding:0 28px 16px;}
+@media(max-width:800px){.crow{grid-template-columns:1fr;}}
+.cc{background:var(--w);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.cc h3{font-size:12px;font-weight:600;color:#666;margin-bottom:10px;}
+.cw{position:relative;height:200px;}
+
+.acc-wrap{padding:0 28px 24px;}
+.acc-wrap>h3{font-size:14px;font-weight:600;color:#555;margin-bottom:10px;}
+.month-block{background:var(--w);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:10px;overflow:hidden;}
+.month-header{display:grid;grid-template-columns:130px 1fr 1fr 1fr 1fr 1fr 36px;
+  align-items:center;padding:13px 18px;cursor:pointer;gap:8px;
+  border-bottom:1px solid transparent;transition:background .15s;}
+.month-header:hover{background:#F7FBFF;}
+.month-header.open{border-bottom:1px solid #eee;background:#F7FBFF;}
+.mh-label{font-size:13px;font-weight:700;}
+.mtd-badge{font-size:10px;background:#009EE3;color:white;border-radius:8px;padding:1px 6px;margin-left:5px;vertical-align:middle;}
+.mh-val{text-align:center;}
+.mh-val .v{font-size:16px;font-weight:700;}
+.mh-val .l{font-size:10px;color:#aaa;text-transform:uppercase;}
+.mh-chip{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:700;}
+.arrow{font-size:13px;color:#aaa;text-align:right;transition:transform .2s;}
+.arrow.open{transform:rotate(180deg);}
+.month-body{display:none;padding:0 18px 14px;}
+.month-body.open{display:block;}
+
+.stbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;}
+.stbl th{background:#F0F4F8;color:#666;font-weight:600;padding:7px 10px;text-align:center;white-space:nowrap;}
+.stbl th:first-child{text-align:left;}
+.stbl td{padding:7px 10px;border-bottom:1px solid #f5f5f5;text-align:center;white-space:nowrap;}
+.stbl td:first-child{text-align:left;}
+.stbl tr:last-child td{border:none;} .stbl tr:hover td{background:#F7FBFF;}
+
+.tc{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;min-width:74px;}
+.t-ALZA{background:#C6EFCE;color:#276221;} .t-BAJA{background:#FFD7D7;color:#9C1515;}
+.t-CHURN{background:#FF4444;color:#fff;} .t-NUEVO{background:#DDEBF7;color:#1A5276;}
+.t-ESTABLE{background:#FFFFC0;color:#7D6608;}
+
+.sol-pro{background:#EEF4FF;color:#1A5276;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;}
+.sol-api{background:#F5EEFF;color:#5C1F8A;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;}
+.sol-sh {background:#E8F7F0;color:#1A5C40;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;}
+.ar-hi{color:#276221;font-weight:700;} .ar-md{color:#7D6608;font-weight:700;} .ar-lo{color:#9C1515;font-weight:700;}
+.st-live{color:#00A650;font-weight:700;} .st-churn{color:#E23D3D;font-weight:700;} .st-other{color:#888;}
+
+/* ── PLAN TAB ── */
+.plan-wrap{padding:0 28px 28px;}
+.plan-wrap>h3{font-size:14px;font-weight:600;color:#555;margin-bottom:12px;}
+.plan-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.tbl-card{background:var(--w);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:14px;overflow-x:auto;}
+.tbl-card h4{font-size:12px;font-weight:600;color:#666;margin-bottom:10px;}
+.ptbl{border-collapse:collapse;font-size:12px;width:100%;min-width:860px;}
+.ptbl th{padding:7px 10px;text-align:center;white-space:nowrap;font-size:11px;font-weight:700;background:#F0F4F8;color:#555;border-bottom:2px solid #e0e0e0;}
+.ptbl th:first-child{text-align:left;min-width:160px;}
+.ptbl td{padding:7px 10px;border-bottom:1px solid #f5f5f5;text-align:center;white-space:nowrap;}
+.ptbl td:first-child{text-align:left;font-weight:600;padding-left:12px;}
+.r-cons td{color:#888;background:#FAFAFA;} .r-opt td{color:#1565C0;background:#F0F5FF;}
+.r-meta td{color:#7A4400;background:#FFF8E6;} .r-real td{background:#E8F7EE;color:#1A5C30;font-weight:700;}
+.r-sub td{color:#bbb;font-size:11px;padding:4px 10px;}
+
+/* ── ADQ TAB ── */
+.adq-wrap{padding:0 28px 28px;}
+.adq-wrap>h3{font-size:14px;font-weight:600;color:#555;margin-bottom:12px;}
+.funnel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.fc{background:var(--w);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.fc h4{font-size:12px;font-weight:700;margin-bottom:12px;}
+.frow{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.fbar2{height:6px;background:#eee;border-radius:3px;margin-bottom:8px;overflow:hidden;}
+.fbar2 div{height:100%;border-radius:3px;}
+.fdiv{border-top:1px solid #eee;padding-top:7px;margin-top:4px;display:flex;justify-content:space-between;font-size:12px;font-weight:700;}
+.atbl-card{background:var(--w);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:14px;overflow-x:auto;}
+.atbl-card h4{font-size:12px;font-weight:600;color:#666;margin-bottom:10px;}
+.atbl{border-collapse:collapse;font-size:12px;width:100%;min-width:720px;}
+.atbl th{padding:7px 10px;text-align:center;font-size:11px;font-weight:700;background:#F0F4F8;color:#555;border-bottom:2px solid #e0e0e0;}
+.atbl th:first-child{text-align:left;min-width:200px;}
+.atbl td{padding:7px 10px;border-bottom:1px solid #f5f5f5;text-align:center;white-space:nowrap;}
+.atbl td:first-child{text-align:left;}
+.atbl .hdr-row td{background:#F8FAFC;font-size:11px;font-weight:700;padding:5px 10px;}
+
+.hidden{display:none;}
+.footer{text-align:center;font-size:10px;color:#ccc;padding:12px 0 20px;}
+
+/* ── FARMING ACCORDION TABLE — mismo estilo visual que Seguimiento ── */
+.stbl td{border-bottom:1.5px solid rgba(0,0,0,.06)!important;}
+.stbl tr:hover td{background:#F5F9FF!important;}
+/* row tinting por status en farming */
+.stbl tr[data-st="LIVE"]          td{background:rgba(0,166,80,.04)!important;}
+.stbl tr[data-st="Churn"]         td{background:rgba(226,61,61,.06)!important;}
+.stbl tr[data-st="Verbal Yes"]    td{background:rgba(67,160,71,.04)!important;}
+.stbl tr[data-st="Reu técnica"]   td{background:rgba(251,140,0,.05)!important;}
+.stbl tr[data-st="Desarrollando"] td{background:rgba(123,31,162,.04)!important;}
+.stbl tr[data-st="Carta Firmada"] td{background:rgba(21,101,192,.04)!important;}
+.stbl tr[data-st="Carta Enviada"] td{background:rgba(245,127,23,.04)!important;}
+/* barra izquierda por status en farming */
+.stbl tr[data-st="LIVE"]          td:first-child{border-left:5px solid #00A650;}
+.stbl tr[data-st="Churn"]         td:first-child{border-left:5px solid #E23D3D;}
+.stbl tr[data-st="Verbal Yes"]    td:first-child{border-left:5px solid #43A047;}
+.stbl tr[data-st="Reu técnica"]   td:first-child{border-left:5px solid #FB8C00;}
+.stbl tr[data-st="Desarrollando"] td:first-child{border-left:5px solid #7B1FA2;}
+.stbl tr[data-st="Carta Firmada"] td:first-child{border-left:5px solid #1565C0;}
+.stbl tr[data-st="Carta Enviada"] td:first-child{border-left:5px solid #F57F17;}
+/* hover override */
+.stbl tr:hover td{filter:brightness(.97);}
+/* col Envíos ME — highlight verde */
+.stbl .col-env{color:#00695C;font-weight:700;}
+/* col L3M — highlight azul */
+.stbl .col-l3m{color:#1565C0;font-weight:700;}
+
+/* ── SEGUIMIENTO TAB ── */
+.seg-wrap{padding:0 28px 28px;}
+.seg-wrap>.seg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.seg-wrap>.seg-hdr h3{font-size:14px;font-weight:600;color:#555;}
+.seg-fbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.seg-fbtn{padding:4px 11px;border:1px solid #d8d8d8;border-radius:14px;background:#fff;cursor:pointer;font-size:11px;color:#555;transition:all .15s;}
+.seg-fbtn.active{background:#009EE3;color:#fff;border-color:#009EE3;}
+.seg-fbtn:hover:not(.active){border-color:#009EE3;color:#009EE3;}
+.seg-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.seg-tbl-wrap{overflow-x:auto;background:var(--w);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.seg-tbl{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%;}
+.seg-tbl th{background:#F0F4F8;color:#666;font-weight:600;padding:7px 9px;text-align:center;border-bottom:1.5px solid #dfe1e6;}
+.seg-tbl th.left{text-align:left;}
+.seg-tbl th.grp{color:white;font-size:10px;letter-spacing:.3px;text-align:center;padding:5px 9px;}
+.seg-tbl th.grp.g-info{background:#37474F;}
+.seg-tbl th.grp.g-integ{background:#1565C0;}
+.seg-tbl th.grp.g-com{background:#2E7D32;}
+.seg-tbl th.grp.g-bench{background:#6A1B9A;}
+.seg-tbl th.grp.g-ene{background:#1976D2;opacity:.85;}
+.seg-tbl th.grp.g-feb{background:#0277BD;opacity:.85;}
+.seg-tbl th.grp.g-mar{background:#00838F;opacity:.85;}
+.seg-tbl th.grp.g-jun{background:#00695C;}
+.seg-tbl th.grp.g-fct{background:#BF360C;}
+.seg-tbl .sl{position:sticky;left:0;background:#fff;z-index:5;box-shadow:2px 0 5px rgba(0,0,0,.07);}
+.seg-tbl thead .sl{background:#F0F4F8;z-index:6;}
+.seg-tbl td{padding:7px 9px;border-bottom:1px solid #f5f5f5;vertical-align:middle;}
+.seg-tbl td.center{text-align:center;}
+.seg-tbl tr:hover td{background:#F7FBFF!important;}
+.seg-tbl tr:nth-child(even) td{background:#FAFBFC;}
+.seg-tbl tr.tr-churn{opacity:.6;}
+.seg-tbl tr.tr-churn td{background:#FFF5F5;}
+.seg-tbl .days-badge{display:inline-block;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:700;}
+.days-soon{background:#FFF3CD;color:#856404;}
+.days-past{background:#E8F7EE;color:#1A5C30;}
+.days-future{background:#E8F0FF;color:#1A3C8F;}
+.on-si{color:#00A650;font-weight:600;font-size:11px;}
+.on-no{color:#E23D3D;font-size:11px;}
+.on-tbd{color:#888;font-size:11px;}
+.on-dif{color:#F5A623;font-weight:600;font-size:11px;}
+
+/* ── STATUS: tint toda la fila + barra izquierda en .sl ── */
+.seg-tbl tr[data-st="LIVE"]         td{background:rgba(0,166,80,.04)!important;}
+.seg-tbl tr[data-st="Churn"]        td{background:rgba(226,61,61,.06)!important;}
+.seg-tbl tr[data-st="Verbal Yes"]   td{background:rgba(67,160,71,.04)!important;}
+.seg-tbl tr[data-st="Reu técnica"]  td{background:rgba(251,140,0,.05)!important;}
+.seg-tbl tr[data-st="Desarrollando"]td{background:rgba(123,31,162,.04)!important;}
+.seg-tbl tr[data-st="Carta Firmada"]td{background:rgba(21,101,192,.04)!important;}
+.seg-tbl tr[data-st="Carta Enviada"]td{background:rgba(245,127,23,.04)!important;}
+/* barra izquierda en sticky col */
+.seg-tbl tr[data-st="LIVE"]         td.sl{border-left:5px solid #00A650;}
+.seg-tbl tr[data-st="Churn"]        td.sl{border-left:5px solid #E23D3D;}
+.seg-tbl tr[data-st="Verbal Yes"]   td.sl{border-left:5px solid #43A047;}
+.seg-tbl tr[data-st="Reu técnica"]  td.sl{border-left:5px solid #FB8C00;}
+.seg-tbl tr[data-st="Desarrollando"] td.sl{border-left:5px solid #7B1FA2;}
+.seg-tbl tr[data-st="Carta Firmada"] td.sl{border-left:5px solid #1565C0;}
+.seg-tbl tr[data-st="Carta Enviada"] td.sl{border-left:5px solid #F57F17;}
+/* hover: mantener tint con un tono más fuerte */
+.seg-tbl tr:hover td{filter:brightness(.97);}
+/* separador entre filas */
+.seg-tbl td{border-bottom:1.5px solid rgba(0,0,0,.06)!important;}
+/* ── Seller row number badge ── */
+.s-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:800;flex-shrink:0;margin-right:7px;margin-top:1px;}
+.sn-0{background:#DBEAFE;color:#1E40AF;} .sn-1{background:#D1FAE5;color:#065F46;}
+.sn-2{background:#EDE9FE;color:#5B21B6;} .sn-3{background:#FEF3C7;color:#92400E;}
+.sn-4{background:#FCE7F3;color:#9D174D;} .sn-5{background:#ECFDF5;color:#047857;}
+.sn-6{background:#FFF7ED;color:#C2410C;} .sn-7{background:#F0F9FF;color:#0369A1;}
+.sn-8{background:#F5F3FF;color:#6D28D9;} .sn-9{background:#F0FDF4;color:#15803D;}
+.sl-row{display:flex;align-items:flex-start;}
+/* Status badge centrado y display block */
+.seg-tbl .st-badge{display:block;text-align:center;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;}
+.st-LIVE{background:#C8F5DC;color:#1B5E20;}
+.st-Churn{background:#FFCDD2;color:#B71C1C;}
+.st-Verbal{background:#DCEDC8;color:#33691E;}
+.st-Reu{background:#FFE0B2;color:#BF360C;}
+.st-Dev{background:#EDE7F6;color:#4A148C;}
+.st-Firmada{background:#BBDEFB;color:#0D47A1;}
+.st-Enviada{background:#FFF9C4;color:#F57F17;}
+
+/* ── Frente pills ── */
+.fp{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;white-space:nowrap;}
+.fp-biz{background:#DBEAFE;color:#1E40AF;}
+.fp-pro{background:#D1FAE5;color:#065F46;}
+.fp-api{background:#EDE9FE;color:#5B21B6;}
+.fp-shp{background:#ECFDF5;color:#047857;}
+.fp-par{background:#FEF3C7;color:#92400E;}
+.fp-com{background:#F1F5F9;color:#475569;}
+
+/* ── Columnas mes — separadores y tinting ── */
+.seg-tbl td.sep-l{border-left:2px solid #E0E8F5;}
+.seg-tbl td.mc-ene{background:rgba(21,101,192,.04)!important;}
+.seg-tbl td.mc-feb{background:rgba(2,119,189,.04)!important;}
+.seg-tbl td.mc-mar{background:rgba(0,131,143,.04)!important;}
+.seg-tbl td.mc-jun{background:rgba(0,105,92,.06)!important;}
+.seg-tbl td.mc-fct{background:rgba(191,54,12,.05)!important;}
+.seg-tbl td.mc-jun.mc-env{font-weight:700;color:#00695C;}
+.seg-tbl td.mc-fct.mc-env{font-weight:700;color:#BF360C;}
+/* hover override for month cells */
+.seg-tbl tr:hover td.mc-ene,.seg-tbl tr:hover td.mc-feb,
+.seg-tbl tr:hover td.mc-mar,.seg-tbl tr:hover td.mc-jun,
+.seg-tbl tr:hover td.mc-fct{background:#F5F9FF!important;}
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<div class="hdr">
+  <svg width="42" height="42" viewBox="0 0 42 42"><rect width="42" height="42" rx="8" fill="#009EE3"/>
+    <text x="21" y="28" text-anchor="middle" fill="white" font-size="17" font-weight="bold">MP</text></svg>
+  <div><h1>BWM Sellers — Plan, Adquisición &amp; Farming</h1><p>Envíos · KPIs · Tendencia · México</p></div>
+  <div class="hdr-r">Actualizado: 23/06/2026 MTD<br><span class="hdr-badge dn">▼ 47% vs Plan Jun</span></div>
+</div>
+
+<!-- ─── FILTER BAR ─── -->
+<div class="fbar">
+  <div class="fg"><label>Año</label><select id="fY"><option>2026</option></select></div>
+  <div class="fg"><label>Seller</label><select id="fS" onchange="apply_()"><option value="all">Todos los sellers</option></select></div>
+  <div class="fg"><label>Canal</label>
+    <select id="fC" onchange="apply_()">
+      <option value="all">Todos</option><option>CHO PRO</option><option>CHO API</option><option>SHOPIFY</option>
+    </select></div>
+  <div class="fg"><label>Tendencia</label>
+    <select id="fT" onchange="apply_()">
+      <option value="all">Todas</option>
+      <option>ALZA</option><option>BAJA</option><option>CHURN</option><option>NUEVO</option><option>ESTABLE</option>
+    </select></div>
+  <button class="btn" onclick="clear_()">Limpiar</button>
+  <div class="view-tabs">
+    <button class="vtab active" onclick="setView('farming',this)">Farming</button>
+    <button class="vtab" onclick="setView('adq',this)">Adquisición</button>
+    <button class="vtab" onclick="setView('plan',this)">Plan</button>
+    <button class="vtab" onclick="setView('seg',this)">Seguimiento</button>
+  </div>
+</div>
+
+<!-- ─── KPI ROW ─── -->
+<div class="krow">
+  <div class="kc"><div class="lbl">Sellers Activos</div><div class="val">20</div>
+    <div class="sub">de 29 total · jun 2026</div><span class="chip fl">4 nuevos</span></div>
+  <div class="kc g"><div class="lbl">Shipments ME</div><div class="val">813</div>
+    <div class="sub">MTD 23/06 · Plan: 1,537</div><span class="chip up">▲ 36% día equiv.</span></div>
+  <div class="kc o"><div class="lbl">AR% Entregado</div><div class="val">36%</div>
+    <div class="sub">sellers activos · jun MTD</div><span class="chip nt">Meta: ~53%</span></div>
+  <div class="kc"><div class="lbl">TPN MP</div><div class="val">2,254</div>
+    <div class="sub">jun 2026 MTD</div></div>
+  <div class="kc r"><div class="lbl">Churn</div><div class="val">1</div>
+    <div class="sub">Vapotlan · 03/06/2026</div><span class="chip dn">▼ 3%</span></div>
+  <div class="kc gr"><div class="lbl">Meses en 2026</div><div class="val">6</div>
+    <div class="sub">ene 2026 → jun 2026</div></div>
+</div>
+
+<!-- ═══════════ FARMING VIEW ═══════════ -->
+<div id="vFarming">
+  <div class="crow">
+    <div class="cc"><h3>Envíos ME mensuales vs Plan</h3><div class="cw"><canvas id="cM"></canvas></div></div>
+    <div class="cc"><h3>Distribución por tendencia</h3><div class="cw"><canvas id="cT"></canvas></div></div>
+  </div>
+  <div class="acc-wrap">
+    <h3>Resumen por mes — click para ver desglose</h3>
+    <div id="accordion"></div>
+  </div>
+</div>
+
+<!-- ═══════════ ADQ VIEW ═══════════ -->
+<div id="vAdq" class="hidden">
+  <div class="adq-wrap">
+    <h3>Funnel de Adquisición — Junio 2026</h3>
+    <div class="krow" style="padding:0 0 16px">
+      <div class="kc"><div class="lbl">Base CHO PRO</div><div class="val">256</div><div class="sub">sellers addressables</div></div>
+      <div class="kc p"><div class="lbl">Base CHO API</div><div class="val">129</div><div class="sub">86 impactados</div></div>
+      <div class="kc g"><div class="lbl">Base Shopify con MP</div><div class="val">86</div><div class="sub">→ 203 en Q3</div></div>
+      <div class="kc o"><div class="lbl">Engagement Rate</div><div class="val">9.0%</div><div class="sub">PRO: 13% · Shpf: 28%</div></div>
+      <div class="kc"><div class="lbl">CVR (base eng.)</div><div class="val">6.2%</div><div class="sub">Dir: 18% · Shpf: 27%</div></div>
+      <div class="kc r"><div class="lbl">Churn Rate Jun</div><div class="val">3%</div><div class="sub">1 seller · Vapotlan</div></div>
+    </div>
+    <div class="funnel-grid">
+      <div class="fc">
+        <h4 style="color:#009EE3">CHO PRO</h4>
+        <div class="frow"><span>Addressable</span><strong>256</strong></div>
+        <div class="fbar2"><div style="width:100%;background:#009EE3"></div></div>
+        <div class="frow"><span>Engajados 13%</span><strong>33</strong></div>
+        <div class="fbar2"><div style="width:13%;background:#009EE3"></div></div>
+        <div class="frow"><span>Convertidos 18%</span><strong>6</strong></div>
+        <div class="fbar2"><div style="width:2.3%;background:#009EE3"></div></div>
+        <div class="fdiv"><span>CVR Total</span><span style="color:#009EE3">2.3%</span></div>
+      </div>
+      <div class="fc">
+        <h4 style="color:#7C3DB5">CHO API</h4>
+        <div class="frow"><span>Addressable</span><strong>129</strong></div>
+        <div class="fbar2"><div style="width:100%;background:#7C3DB5"></div></div>
+        <div class="frow"><span>Engajados 13%</span><strong>17</strong></div>
+        <div class="fbar2"><div style="width:13%;background:#7C3DB5"></div></div>
+        <div class="frow"><span>Convertidos 18%</span><strong>3</strong></div>
+        <div class="fbar2"><div style="width:2.3%;background:#7C3DB5"></div></div>
+        <div class="fdiv"><span>CVR Total</span><span style="color:#7C3DB5">2.3%</span></div>
+      </div>
+      <div class="fc">
+        <h4 style="color:#00A650">Shopify (con MP)</h4>
+        <div class="frow"><span>Addressable</span><strong>86</strong></div>
+        <div class="fbar2"><div style="width:100%;background:#00A650"></div></div>
+        <div class="frow"><span>Engajados 28%</span><strong>24</strong></div>
+        <div class="fbar2"><div style="width:28%;background:#00A650"></div></div>
+        <div class="frow"><span>Convertidos 27%</span><strong>6</strong></div>
+        <div class="fbar2"><div style="width:7.6%;background:#00A650"></div></div>
+        <div class="fdiv"><span>CVR Total</span><span style="color:#00A650">7.6%</span></div>
+      </div>
+    </div>
+
+    <div class="atbl-card">
+      <h4>New Sellers por Mes — Plan de Adquisición 2026</h4>
+      <table class="atbl">
+        <thead><tr><th>Canal</th><th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr style="font-weight:700"><td>Total</td><td>0</td><td>0</td><td>1</td><td>10</td><td>6</td><td>2</td><td>2</td><td>1</td><td>35</td><td>43</td><td>18</td><td>26</td><td style="color:#009EE3">95</td></tr>
+          <tr><td style="padding-left:20px;color:#009EE3">↳ CHO PRO</td><td>—</td><td>—</td><td>1</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td></tr>
+          <tr><td style="padding-left:20px;color:#7C3DB5">↳ CHO API</td><td>—</td><td>—</td><td>—</td><td>10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>10</td></tr>
+          <tr><td style="padding-left:20px;color:#00A650">↳ Shopify con MP</td><td>—</td><td>—</td><td>—</td><td>—</td><td>0</td><td>1</td><td>1</td><td>1</td><td>3</td><td>2</td><td>2</td><td>2</td><td>13</td></tr>
+          <tr><td style="padding-left:20px;color:#00838f">↳ Shopify new</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>1</td><td>1</td><td>1</td><td>32</td><td>40</td><td>16</td><td>24</td><td>115</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="atbl-card">
+      <h4>Tasas ER% y CVR% por Canal (Plan)</h4>
+      <table class="atbl">
+        <thead><tr><th>Métrica</th><th>Abr</th><th>May</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th></tr></thead>
+        <tbody>
+          <tr class="hdr-row"><td colspan="10" style="color:#009EE3">ENGAGEMENT RATE (ER%)</td></tr>
+          <tr><td style="padding-left:16px;color:#009EE3">CHO PRO / API</td><td>15%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td></tr>
+          <tr><td style="padding-left:16px;color:#00A650">Shopify con MP</td><td>—</td><td>20%</td><td>35%</td><td>25%</td><td>20%</td><td>35%</td><td>30%</td><td>20%</td><td>20%</td></tr>
+          <tr><td style="padding-left:16px;color:#00838f">Shopify new</td><td>—</td><td>—</td><td>20%</td><td>15%</td><td>15%</td><td>20%</td><td>25%</td><td>10%</td><td>15%</td></tr>
+          <tr class="hdr-row"><td colspan="10" style="color:#00A650">TASA DE CONVERSIÓN (CVR%)</td></tr>
+          <tr><td style="padding-left:16px;color:#009EE3">CHO PRO / API</td><td>8%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td></tr>
+          <tr><td style="padding-left:16px;color:#00A650">Shopify con MP</td><td>—</td><td>2%</td><td>4%</td><td>3%</td><td>2%</td><td>4%</td><td>3%</td><td>2%</td><td>2%</td></tr>
+          <tr><td style="padding-left:16px;color:#00838f">Shopify new</td><td>—</td><td>—</td><td>0.6%</td><td>0.5%</td><td>0.5%</td><td>0.6%</td><td>0.8%</td><td>0.3%</td><td>0.5%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PLAN VIEW ═══════════ -->
+<div id="vPlan" class="hidden">
+  <div class="plan-wrap">
+    <h3>Escenarios de Crecimiento 2026</h3>
+    <div class="plan-cards">
+      <div class="kc g"><div class="lbl">Sellers Conservador Jun</div><div class="val">21</div>
+        <div class="sub">Actual: 20 · −5%</div><span class="chip up">cerca</span></div>
+      <div class="kc"><div class="lbl">Sellers Optimista Jun</div><div class="val">23</div>
+        <div class="sub">Actual: 20 · −13%</div><span class="chip nt">en riesgo</span></div>
+      <div class="kc r"><div class="lbl">Sellers Meta 2026 Jun</div><div class="val">59</div>
+        <div class="sub">Actual: 20 · −66%</div><span class="chip dn">lejos</span></div>
+    </div>
+
+    <div class="tbl-card">
+      <h4>Sellers Activos por Mes</h4>
+      <table class="ptbl">
+        <thead><tr><th>Escenario</th><th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th>Acum.</th></tr></thead>
+        <tbody>
+          <tr class="r-cons"><td>Conservador</td><td>3</td><td>4</td><td>5</td><td>8</td><td>11</td><td>21</td><td>48</td><td>74</td><td>84</td><td>120</td><td>151</td><td>183</td><td>183</td></tr>
+          <tr class="r-opt"><td>Optimista</td><td>3</td><td>4</td><td>5</td><td>8</td><td>11</td><td>23</td><td>61</td><td>93</td><td>105</td><td>139</td><td>175</td><td>209</td><td>209</td></tr>
+          <tr class="r-meta"><td>Meta 2026</td><td>8</td><td>10</td><td>14</td><td>21</td><td>46</td><td>59</td><td>135</td><td>157</td><td>181</td><td>239</td><td>239</td><td>239</td><td>239</td></tr>
+          <tr class="r-real"><td>✓ Realizado</td><td>3</td><td>4</td><td>5</td><td>9</td><td>11</td><td>20</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td>28</td></tr>
+          <tr class="r-sub"><td>↳ New sellers</td><td>—</td><td>1</td><td>1</td><td>4</td><td>2</td><td>10</td><td>8</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>26</td></tr>
+          <tr class="r-sub"><td>↳ Churn</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#E23D3D;font-weight:700">1</td><td>0</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td style="color:#E23D3D">1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-card">
+      <h4>TPN (Transacciones MP) por Mes</h4>
+      <table class="ptbl">
+        <thead><tr><th>Escenario</th><th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr class="r-cons"><td>Conservador</td><td>654</td><td>498</td><td>253</td><td>311</td><td>803</td><td>2,619</td><td>6,386</td><td>13,198</td><td>23,028</td><td>33,024</td><td>48,052</td><td>58,894</td><td>187,721</td></tr>
+          <tr class="r-opt"><td>Optimista</td><td>654</td><td>498</td><td>253</td><td>311</td><td>803</td><td>2,899</td><td>8,646</td><td>17,643</td><td>29,991</td><td>40,322</td><td>56,599</td><td>68,500</td><td>227,120</td></tr>
+          <tr class="r-meta"><td>Meta 2026</td><td>936</td><td>1,235</td><td>2,205</td><td>5,003</td><td>14,135</td><td>13,315</td><td>27,593</td><td>31,943</td><td>37,787</td><td>49,868</td><td>59,841</td><td>63,830</td><td>307,691</td></tr>
+          <tr class="r-real"><td>✓ Realizado</td><td>654</td><td>498</td><td>253</td><td>311</td><td>803</td><td>2,016</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td style="color:#bbb">—</td><td>4,535</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-card">
+      <h4>Meta Paquetes ME (Envíos) — Premisa actualizada</h4>
+      <table class="ptbl">
+        <thead><tr><th>Métrica</th><th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Meta Sellers Activos</td><td>3</td><td>3</td><td>4</td><td>13</td><td>19</td><td>21</td><td>22</td><td>22</td><td>56</td><td>98</td><td>116</td><td>141</td><td>141</td></tr>
+          <tr style="font-weight:700"><td>Meta Paquetes ME</td><td>654</td><td>498</td><td>253</td><td>2,238</td><td>37,054</td><td>17,890</td><td>17,181</td><td>17,355</td><td>86,673</td><td>123,914</td><td>146,215</td><td>164,153</td><td>614,077</td></tr>
+          <tr class="r-sub"><td>↳ New sellers</td><td>—</td><td>—</td><td>—</td><td>1,853</td><td>22,336</td><td>4,951</td><td>4,460</td><td>3,998</td><td>77,452</td><td>94,339</td><td>45,261</td><td>102,535</td><td>—</td></tr>
+          <tr class="r-sub"><td>↳ Sellers activos</td><td>654</td><td>498</td><td>253</td><td>454</td><td>14,718</td><td>13,493</td><td>13,253</td><td>13,893</td><td>11,901</td><td>29,575</td><td>52,216</td><td>61,618</td><td>—</td></tr>
+          <tr class="r-sub" style="color:#E23D3D"><td>Churn Rate</td><td>0%</td><td>0%</td><td>0%</td><td>3%</td><td>0%</td><td>3%</td><td>3%</td><td>3%</td><td>3%</td><td>0%</td><td>0%</td><td>0%</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SEGUIMIENTO VIEW ═══════════ -->
+<div id="vSeg" class="hidden">
+  <div class="seg-wrap">
+    <div class="seg-hdr">
+      <h3>Seguimiento Seller to Sellers — Agenda Diaria</h3>
+      <div class="seg-fbar">
+        <span style="font-size:11px;color:#888">Filtrar:</span>
+        <button class="seg-fbtn active" onclick="segFilter('all',this)">Todos</button>
+        <button class="seg-fbtn" onclick="segFilter('LIVE',this)">LIVE</button>
+        <button class="seg-fbtn" onclick="segFilter('pipeline',this)">En pipeline</button>
+        <button class="seg-fbtn" onclick="segFilter('CHO PRO',this)">CHO PRO</button>
+        <button class="seg-fbtn" onclick="segFilter('CHO API',this)">CHO API</button>
+        <button class="seg-fbtn" onclick="segFilter('SHOPIFY',this)">Shopify</button>
+        <button class="seg-fbtn" onclick="segFilter('Churn',this)">Churn</button>
+      </div>
+    </div>
+
+    <div class="seg-summary">
+      <div class="kc g"><div class="lbl">LIVE</div><div class="val" id="cnt-live">—</div><div class="sub">sellers activos</div></div>
+      <div class="kc o"><div class="lbl">En pipeline</div><div class="val" id="cnt-pipe">—</div><div class="sub">Verbal/Reu/Desarrollando</div></div>
+      <div class="kc"><div class="lbl">Go Live próx. 30d</div><div class="val" id="cnt-soon">—</div><div class="sub">sellers próximos</div></div>
+      <div class="kc r"><div class="lbl">Churn</div><div class="val" id="cnt-churn">—</div><div class="sub">sellers perdidos</div></div>
+      <div class="kc gr"><div class="lbl">Total sellers</div><div class="val" id="cnt-total">—</div><div class="sub">en tracking</div></div>
+    </div>
+
+    <div class="seg-tbl-wrap">
+      <table class="seg-tbl" id="seg-table">
+        <thead>
+          <tr>
+            <th class="sl grp g-info" colspan="2">SELLER</th>
+            <th class="grp g-integ" colspan="4">INTEGRACIÓN</th>
+            <th class="grp g-com" colspan="3">COMERCIAL</th>
+            <th class="grp g-bench" colspan="3">BENCHMARK</th>
+            <th class="grp g-ene" colspan="3">ENE 2026</th>
+            <th class="grp g-feb" colspan="3">FEB 2026</th>
+            <th class="grp g-mar" colspan="3">MAR 2026</th>
+            <th class="grp g-jun" colspan="3">JUN MTD (23/06)</th>
+            <th class="grp g-fct" colspan="2">JUN FORECAST</th>
+          </tr>
+          <tr>
+            <th class="sl left" style="min-width:160px">Seller</th>
+            <th>Status</th>
+            <th>¿Vende ON?</th>
+            <th>Inicio Integr.</th>
+            <th>Go Live</th>
+            <th>Churn</th>
+            <th>Frente</th>
+            <th>Solución</th>
+            <th>Incentivo</th>
+            <th class="center">Potencial TPN</th>
+            <th class="center">L3M (MP)</th>
+            <th class="center">% SOW</th>
+            <th class="center">TPN</th><th class="center">Env.</th><th class="center">AR%</th>
+            <th class="center">TPN</th><th class="center">Env.</th><th class="center">AR%</th>
+            <th class="center">TPN</th><th class="center">Env.</th><th class="center">AR%</th>
+            <th class="center">TPN</th><th class="center">Env.</th><th class="center">AR%</th>
+            <th class="center">Env.</th><th class="center">AR%</th>
+          </tr>
+        </thead>
+        <tbody id="seg-tbody"></tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:#bbb;margin-top:8px">* AR% = Envíos ME / TPN MP · L3M = promedio últimos 3 meses de TPN total MP · Fuente: BD Sellers BWM + DM_VIEW_BWM_FARMING_SELLERS · Actualizado 24/06/2026</p>
+  </div>
+</div>
+
+<div class="footer">BWM Sellers Dashboard · MX · Datos: BD Sellers BWM + DM_VIEW_BWM_FARMING_SELLERS · jun 2026</div>
+
+<script>
+const TC={ALZA:'#C6EFCE',BAJA:'#FFD7D7',CHURN:'#FF6B6B',NUEVO:'#DDEBF7',ESTABLE:'#FFFFC0'};
+
+const MONTHS=[
+  {key:'2026-06',label:'jun 2026',isMTD:true, sellers:20,ships:813,tpn:2254,ar:36, prev:595},
+  {key:'2026-05',label:'may 2026',             sellers:11,ships:803,tpn:null,ar:null,prev:311,noDetail:true},
+  {key:'2026-04',label:'abr 2026',             sellers:9, ships:311,tpn:null,ar:null,prev:253,aprOnly:true},
+  {key:'2026-03',label:'mar 2026',             sellers:5, ships:253,tpn:null,ar:81,  prev:498},
+  {key:'2026-02',label:'feb 2026',             sellers:5, ships:498,tpn:null,ar:85,  prev:654},
+  {key:'2026-01',label:'ene 2026',             sellers:4, ships:654,tpn:1262,ar:55,  prev:null},
+];
+
+const DET={
+  '2026-01':[
+    {name:'UpInn',       nick:'mistoremx.com',      tend:'BAJA',   sol:'CHO PRO',st:'LIVE',         tpn:1098,ships:563,ar:51, l3m:86},
+    {name:'Ecopipo',     nick:'ecopipo.com',         tend:'BAJA',   sol:'CHO PRO',st:'LIVE',         tpn:56,  ships:56, ar:100,l3m:145},
+    {name:'BGS',         nick:'bgstechnic.mx',       tend:'ALZA',   sol:'CHO PRO',st:'LIVE',         tpn:51,  ships:32, ar:63, l3m:87},
+    {name:'Hanny Pulido',nick:'hannypulido.com.mx',  tend:'ESTABLE',sol:'CHO PRO',st:'LIVE',         tpn:57,  ships:3,  ar:5,  l3m:74},
+  ],
+  '2026-02':[
+    {name:'UpInn',       nick:'mistoremx.com',      tend:'BAJA',   sol:'CHO PRO',st:'LIVE',         tpn:null,ships:315,ar:null,l3m:86},
+    {name:'Ecopipo',     nick:'ecopipo.com',         tend:'BAJA',   sol:'CHO PRO',st:'LIVE',         tpn:68,  ships:68, ar:100,l3m:145},
+    {name:'Hanny Pulido',nick:'hannypulido.com.mx',  tend:'ESTABLE',sol:'CHO PRO',st:'LIVE',         tpn:104, ships:63, ar:61, l3m:74},
+    {name:'BGS',         nick:'bgstechnic.mx',       tend:'ALZA',   sol:'CHO PRO',st:'LIVE',         tpn:61,  ships:49, ar:80, l3m:87},
+    {name:'Faly Music',  nick:'falymusic.com',       tend:'ALZA',   sol:'CHO PRO',st:'LIVE',         tpn:3,   ships:3,  ar:100,l3m:282},
+  ],
+  '2026-03':[
+    {name:'Hanny Pulido',nick:'hannypulido.com.mx',  tend:'ESTABLE',sol:'CHO PRO',st:'LIVE',         tpn:169, ships:72, ar:43, l3m:74},
+    {name:'Ecopipo',     nick:'ecopipo.com',         tend:'BAJA',   sol:'CHO PRO',st:'LIVE',         tpn:63,  ships:61, ar:97, l3m:145},
+    {name:'Toyo Foods',  nick:'toyofoods.com.mx',    tend:'BAJA',   sol:'CHO PRO',st:'LIVE',         tpn:75,  ships:71, ar:95, l3m:6},
+    {name:'BGS',         nick:'bgstechnic.mx',       tend:'ALZA',   sol:'CHO PRO',st:'LIVE',         tpn:67,  ships:48, ar:72, l3m:87},
+    {name:'Faly Music',  nick:'falymusic.com',       tend:'ALZA',   sol:'CHO PRO',st:'LIVE',         tpn:1,   ships:1,  ar:100,l3m:282},
+  ],
+  '2026-04':[
+    {name:'Natural Slims',nick:'tiendanaturalslim.com',tend:'NUEVO',sol:'SHOPIFY', st:'Carta Firmada',tpn:1922,ships:null,ar:null,l3m:2291},
+    {name:'UNIT Electronics',nick:'uelectronics.com', tend:'NUEVO',sol:'CHO API', st:'LIVE',         tpn:815, ships:null,ar:null,l3m:606},
+    {name:'México Makers',nick:'mexicomakers.com.mx', tend:'NUEVO',sol:'SHOPIFY', st:'Carta Firmada',tpn:723, ships:null,ar:null,l3m:793},
+    {name:'Friso',        nick:'tiendafriso.com.mx',  tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',         tpn:544, ships:null,ar:null,l3m:640},
+    {name:'Vapotlan',     nick:'vapotlan.com',         tend:'CHURN',sol:'CHO API', st:'Churn',        tpn:361, ships:null,ar:null,l3m:330},
+    {name:'Kanaus',       nick:'kanaus.com',           tend:'NUEVO',sol:'SHOPIFY', st:'Reu técnica',  tpn:366, ships:null,ar:null,l3m:235},
+    {name:'Faly Music',   nick:'falymusic.com',        tend:'ALZA', sol:'CHO PRO', st:'LIVE',         tpn:253, ships:null,ar:null,l3m:282},
+    {name:'Matcha Mexico',nick:'matchamexico.mx',      tend:'ESTABLE',sol:'CHO API',st:'LIVE',        tpn:217, ships:null,ar:null,l3m:211},
+    {name:'Casa Madero',  nick:'madero.com',           tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',         tpn:189, ships:null,ar:null,l3m:286},
+    {name:'Bubba',        nick:'bubbamexico.com',      tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',         tpn:134, ships:null,ar:null,l3m:127},
+    {name:'Hanny Pulido', nick:'hannypulido.com.mx',   tend:'ESTABLE',sol:'CHO PRO',st:'LIVE',        tpn:76,  ships:null,ar:null,l3m:74},
+    {name:'UpInn',        nick:'mistoremx.com',        tend:'BAJA', sol:'CHO PRO', st:'LIVE',         tpn:128, ships:null,ar:null,l3m:86},
+    {name:'BGS',          nick:'bgstechnic.mx',        tend:'ALZA', sol:'CHO PRO', st:'LIVE',         tpn:74,  ships:null,ar:null,l3m:87},
+    {name:'Ecopipo',      nick:'ecopipo.com',          tend:'BAJA', sol:'CHO PRO', st:'LIVE',         tpn:93,  ships:null,ar:null,l3m:145},
+    {name:'Takeya',       nick:'takeyamexico.com',      tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',         tpn:29,  ships:null,ar:null,l3m:28},
+    {name:'Jogs',         nick:'jogsscrubsmx.com',     tend:'NUEVO',sol:'SHOPIFY', st:'Carta Firmada',tpn:27,  ships:null,ar:null,l3m:29},
+    {name:'FUNKITOY',     nick:'funkitoy.mx',          tend:'ALZA', sol:'CHO API', st:'LIVE',         tpn:18,  ships:null,ar:null,l3m:36},
+    {name:'Metforce',     nick:'metforce.com.mx',      tend:'ALZA', sol:'CHO API', st:'LIVE',         tpn:13,  ships:null,ar:null,l3m:20},
+    {name:'Toyo Foods',   nick:'toyofoods.com.mx',     tend:'BAJA', sol:'CHO PRO', st:'LIVE',         tpn:15,  ships:null,ar:null,l3m:6},
+    {name:'DERMA',        nick:'derma-depot.mx',       tend:'ALZA', sol:'CHO API', st:'LIVE',         tpn:1,   ships:null,ar:null,l3m:2},
+  ],
+  '2026-06':[
+    {name:'UNIT Electronics',nick:'uelectronics.com', tend:'NUEVO',sol:'CHO API', st:'LIVE',  tpn:587,ships:134,ar:23, l3m:606},
+    {name:'Casa Madero',  nick:'madero.com',           tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',  tpn:337,ships:38, ar:11, l3m:286},
+    {name:'Friso',        nick:'tiendafriso.com.mx',   tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',  tpn:275,ships:217,ar:79, l3m:640},
+    {name:'Vapotlan',     nick:'vapotlan.com',          tend:'CHURN',sol:'CHO API', st:'Churn', tpn:282,ships:59, ar:21, l3m:330},
+    {name:'Faly Music',   nick:'falymusic.com',         tend:'ALZA', sol:'CHO PRO', st:'LIVE',  tpn:215,ships:10, ar:5,  l3m:282},
+    {name:'Matcha Mexico',nick:'matchamexico.mx',       tend:'ESTABLE',sol:'CHO API',st:'LIVE', tpn:145,ships:113,ar:78, l3m:211},
+    {name:'Ecopipo',      nick:'ecopipo.com',           tend:'BAJA', sol:'CHO PRO', st:'LIVE',  tpn:86, ships:40, ar:47, l3m:145},
+    {name:'Bubba',        nick:'bubbamexico.com',       tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',  tpn:69, ships:8,  ar:12, l3m:127},
+    {name:'Toyo Foods',   nick:'toyofoods.com.mx',      tend:'BAJA', sol:'CHO PRO', st:'LIVE',  tpn:52, ships:53, ar:102,l3m:6},
+    {name:'UpInn',        nick:'mistoremx.com',         tend:'BAJA', sol:'CHO PRO', st:'LIVE',  tpn:56, ships:55, ar:98, l3m:86},
+    {name:'Hanny Pulido', nick:'hannypulido.com.mx',    tend:'ESTABLE',sol:'CHO PRO',st:'LIVE', tpn:43, ships:43, ar:100,l3m:74},
+    {name:'Takeya',       nick:'takeyamexico.com',       tend:'NUEVO',sol:'SHOPIFY', st:'LIVE',  tpn:32, ships:4,  ar:13, l3m:28},
+    {name:'FUNKITOY',     nick:'funkitoy.mx',           tend:'ALZA', sol:'CHO API', st:'LIVE',  tpn:25, ships:12, ar:48, l3m:36},
+    {name:'DERMA',        nick:'derma-depot.mx',        tend:'ALZA', sol:'CHO API', st:'LIVE',  tpn:10, ships:12, ar:120,l3m:2},
+    {name:'Metforce',     nick:'metforce.com.mx',       tend:'ALZA', sol:'CHO API', st:'LIVE',  tpn:5,  ships:5,  ar:100,l3m:20},
+    {name:'BGS',          nick:'bgstechnic.mx',         tend:'ALZA', sol:'CHO PRO', st:'LIVE',  tpn:35, ships:10, ar:29, l3m:87},
+  ],
+};
+
+// filters
+let fS='all',fC='all',fT='all';
+
+function initFilters(){
+  const sel=document.getElementById('fS');
+  const names=[...new Set(Object.values(DET).flat().map(r=>r.name))].sort();
+  names.forEach(n=>{const o=document.createElement('option');o.value=n;o.text=n;sel.appendChild(o);});
+}
+function apply_(){fS=document.getElementById('fS').value;fC=document.getElementById('fC').value;fT=document.getElementById('fT').value;renderAcc();}
+function clear_(){['fS','fC','fT'].forEach(id=>document.getElementById(id).value='all');fS=fC=fT='all';renderAcc();}
+
+function N(v){return v==null?'—':Number(v).toLocaleString('es-MX');}
+function arc(v){return v==null?'':v>=80?'ar-hi':v>=40?'ar-md':'ar-lo';}
+function sol(s){return s==='CHO PRO'?`<span class="sol-pro">CHO PRO</span>`:s==='CHO API'?`<span class="sol-api">CHO API</span>`:`<span class="sol-sh">SHOPIFY</span>`;}
+// ── Status badge global (compartido por Farming y Seguimiento) ──
+const ST_BADGE_MAP={
+  'LIVE':'st-LIVE','Churn':'st-Churn','Verbal Yes':'st-Verbal',
+  'Reu técnica':'st-Reu','Desarrollando':'st-Dev',
+  'Carta Firmada':'st-Firmada','Carta Enviada':'st-Enviada'
+};
+function stBadgeG(s){return`<span class="st-badge ${ST_BADGE_MAP[s]||'st-Enviada'}">${s}</span>`;}
+function numBadge(i){return`<span class="s-num sn-${i%10}">${i+1}</span>`;}
+
+let cM_,cT_;
+function renderCharts(){
+  const ctx1=document.getElementById('cM').getContext('2d');
+  if(cM_)cM_.destroy();
+  cM_=new Chart(ctx1,{type:'bar',data:{
+    labels:['ene','feb','mar','abr','may','jun MTD'],
+    datasets:[
+      {label:'Envíos ME reales',data:[654,498,253,311,803,813],backgroundColor:'#009EE3',borderRadius:5,order:2},
+      {label:'Plan',data:[654,498,253,311,803,1537],type:'line',borderColor:'#F5A623',
+       backgroundColor:'transparent',borderDash:[5,3],pointRadius:4,pointBackgroundColor:'#F5A623',order:1,borderWidth:2}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+      scales:{y:{grid:{color:'#F0F0F0'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+
+  const ctx2=document.getElementById('cT').getContext('2d');
+  if(cT_)cT_.destroy();
+  const cnt={ALZA:5,BAJA:3,ESTABLE:2,CHURN:1,NUEVO:10,'Sin actividad':8};
+  cT_=new Chart(ctx2,{type:'doughnut',data:{
+    labels:Object.keys(cnt),
+    datasets:[{data:Object.values(cnt),
+      backgroundColor:['#C6EFCE','#FFD7D7','#FFFFC0','#FF6B6B','#DDEBF7','#E0E0E0'],
+      borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'right',labels:{font:{size:11},padding:10}}}}});
+}
+
+function renderAcc(){
+  document.getElementById('accordion').innerHTML=MONTHS.map(m=>{
+    let det=(DET[m.key]||[]).filter(r=>{
+      if(fS!=='all'&&r.name!==fS)return false;
+      if(fC!=='all'&&r.sol!==fC)return false;
+      if(fT!=='all'&&r.tend!==fT)return false;
+      return true;
+    });
+
+    const momH=m.prev==null?`<span class="mh-chip fl">—</span>`:
+      (()=>{const p=((m.ships-m.prev)/m.prev*100).toFixed(1);const u=parseFloat(p)>=0;
+        return`<span class="mh-chip ${u?'up':'dn'}">${u?'▲':'▼'} ${Math.abs(p)}%${m.isMTD?' *':''}</span>`;})();
+
+    const arH=m.ar!=null?`<div class="v ${arc(m.ar)}">${m.ar}%</div>`:`<div class="v" style="color:#bbb">—</div>`;
+    const tpnH=m.tpn!=null?`<div class="v">${N(m.tpn)}</div>`:`<div class="v" style="color:#bbb">—</div>`;
+    const mtdB=m.isMTD?`<span class="mtd-badge">MTD</span>`:'';
+
+    let rows='';
+    if(m.noDetail){
+      rows=`<tr><td colspan="8" style="text-align:center;color:#bbb;font-style:italic;padding:14px">Sin desglose disponible para este período</td></tr>`;
+    }else if(!det.length){
+      rows=`<tr><td colspan="8" style="text-align:center;color:#bbb;font-style:italic;padding:14px">Sin registros con los filtros aplicados</td></tr>`;
+    }else{
+      rows=[...det].sort((a,b)=>(b.ships||b.tpn||0)-(a.ships||a.tpn||0)).map((r,ri)=>{
+        const shV=r.ships!=null?N(r.ships):`<span style="color:#bbb;font-size:11px" title="TPN MP (sin envíos)">${N(r.tpn)}</span>`;
+        return`<tr data-st="${r.st}">
+          <td style="text-align:left;min-width:170px">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${numBadge(ri)}
+              <div>
+                <strong style="font-size:12px">${r.name}</strong>
+                <span style="display:block;font-size:10px;color:#aaa">${r.nick}</span>
+              </div>
+            </div>
+          </td>
+          <td style="text-align:center">${sol(r.sol)}</td>
+          <td style="text-align:center">${stBadgeG(r.st)}</td>
+          <td style="text-align:center;font-weight:700">${r.tpn!=null?N(r.tpn):'—'}</td>
+          <td class="col-env" style="text-align:center">${shV}</td>
+          <td style="text-align:center"><span class="${arc(r.ar)}">${r.ar!=null?r.ar+'%':'—'}</span></td>
+          <td class="col-l3m" style="text-align:center">${N(r.l3m)}</td>
+          <td style="text-align:center"><span class="tc t-${r.tend}">${r.tend}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    const thEnv=m.aprOnly?'TPN MP *':'Envíos ME';
+    const noteH=m.aprOnly?`<p style="font-size:11px;color:#aaa;margin:8px 0 0">* Envíos ME no disponibles por seller para este período. Se muestra TPN MP total (fuente: DM_VIEW_BWM_FARMING_SELLERS).</p>`:'';
+
+    return`<div class="month-block" id="mb-${m.key}">
+      <div class="month-header" onclick="tgl('${m.key}')" id="mh-${m.key}">
+        <div><div class="mh-label">${m.label}${mtdB}</div></div>
+        <div class="mh-val"><div class="v">${m.sellers}</div><div class="l">sellers</div></div>
+        <div class="mh-val"><div class="v">${N(m.ships)}</div><div class="l">envíos ME</div></div>
+        <div class="mh-val">${momH}</div>
+        <div class="mh-val">${arH}<div class="l">AR% prom</div></div>
+        <div class="mh-val">${tpnH}<div class="l">TPN MP</div></div>
+        <div class="arrow" id="arr-${m.key}">▼</div>
+      </div>
+      <div class="month-body" id="body-${m.key}">
+        ${noteH}
+        <table class="stbl"><thead><tr>
+          <th>Seller</th><th>Solución</th><th>Status</th>
+          <th>TPN CHO</th><th>${thEnv}</th><th>AR%</th><th>L3M (MP)</th><th>Tendencia</th>
+        </tr></thead><tbody>${rows}</tbody></table>
+      </div>
+    </div>`;
+  }).join('');
+  tgl('2026-06');
+}
+
+function tgl(key){
+  const body=document.getElementById('body-'+key);
+  const hdr=document.getElementById('mh-'+key);
+  const arr=document.getElementById('arr-'+key);
+  if(!body)return;
+  const open=body.classList.toggle('open');
+  if(hdr)hdr.classList.toggle('open',open);
+  if(arr)arr.classList.toggle('open',open);
+}
+
+function setView(v,btn){
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('vFarming').classList.toggle('hidden',v!=='farming');
+  document.getElementById('vAdq').classList.toggle('hidden',v!=='adq');
+  document.getElementById('vPlan').classList.toggle('hidden',v!=='plan');
+  document.getElementById('vSeg').classList.toggle('hidden',v!=='seg');
+}
+
+// ═══ SEGUIMIENTO DATA — 30 sellers (BD Sellers BWM, actualizado 24/06/2026) ═══
+// [id, name, url, vendeOn, inicioInteg, goLive, churnDate, status, frente, sol, incentivo,
+//  potencial, l3m, sow,
+//  e1t,e1v, e2t,e2v, e3t,e3v,
+//  mtdT,mtdV,mtdAR, fctV,fctAR]
+const SEG=[
+  ['180838809','BGS','https://bgstechnic.mx/','mismo ID','2/09/2025','15/10/2025',null,'LIVE','Biz Hub Pro','CHO PRO','Envío Gratis',300,87,'29%',51,32,61,49,67,48,35,10,29,38,119],
+  ['454333952','UpInn','https://mistoremx.com/','mismo ID','14/05/2025','9/12/2025',null,'LIVE','Pro Comercial','CHO PRO','Envío Gratis',560,86,'14%',1098,563,null,315,0,0,56,55,98,136,469],
+  ['337842388','Hanny Pulido','https://www.hannypulido.com.mx/','diferente ID','29/09/2025','13/01/2026',null,'LIVE','Biz Hub Pro','CHO PRO','Envío Gratis',300,74,'25%',57,3,104,63,169,72,43,43,100,68,618],
+  ['2087872279','Ecopipo','https://ecopipo.com/matriz/','No','21/10/2025','10/02/2026',null,'LIVE','Biz Hub Pro','CHO PRO','Envío Gratis',450,145,'32%',56,56,68,68,63,61,86,40,47,34,148],
+  ['585751061','Toyo Foods','https://www.toyofoods.com.mx/','diferente ID','13/01/2026','11/03/2026',null,'LIVE','Pro Comercial','CHO PRO','Envío Gratis',500,6,'3%',0,0,0,0,75,71,52,53,102,29,121],
+  ['118533758','Faly Music','https://www.falymusic.com/','diferente ID','5/03/2025','28/04/2026',null,'LIVE','Pro Comercial','CHO PRO','Envío Gratis',800,282,'36%',0,0,3,3,1,1,215,10,5,70,2333],
+  ['1710476339','DERMA','https://derma-depot.mx/','mismo ID','10/03/2026','28/04/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',400,2,'2%',0,0,0,0,0,0,10,12,120,12,388],
+  ['52498882','FUNKITOY','https://funkitoy.mx/','mismo ID','10/03/2026','28/04/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',100,36,'36%',null,null,null,null,null,null,25,12,48,28,1399],
+  ['409589695','Matcha Mexico','https://www.matchamexico.mx/','mismo ID','10/03/2026','29/04/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',200,211,'106%',null,null,null,null,null,null,145,113,78,234,557],
+  ['417923030','Metforce','https://metforce.com.mx/','mismo ID','17/03/2026','6/05/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',400,20,'5%',null,null,null,null,null,null,5,5,100,14,721],
+  ['5103803','Vapotlan','https://vapotlan.com/','No','24/03/2026','15/05/2026','03/06/2026','Churn','API Comercial','CHO API','Cashback $750usd',250,330,'132%',null,null,null,null,null,null,282,59,21,96,181],
+  ['76712625','UNIT Electronics','https://uelectronics.com','mismo ID','11/05/2026','3/06/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',1200,606,'51%',null,null,null,null,null,null,587,134,23,18,17],
+  ['1982630815','Bubba','https://bubbamexico.com/','mismo ID','26/05/2026','8/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',280,127,'45%',null,null,null,null,null,null,69,8,12,76,null],
+  ['436510625','Takeya','https://www.takeyamexico.com/','mismo ID','26/05/2026','15/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',350,28,'8%',null,null,null,null,null,null,32,4,13,35,null],
+  ['665562994','Friso','https://www.tiendafriso.com.mx/','diferente ID','2/06/2026','8/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',1400,640,'46%',null,null,null,null,null,null,275,217,79,240,null],
+  ['2623632502','Casa Madero','https://madero.com/tienda/','No','26/05/2026','22/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',500,286,'57%',null,null,null,null,null,null,337,38,11,0,null],
+  ['1059122262','Natural Slims','https://www.tiendanaturalslim.com/','mismo ID','26/06/2026','1/07/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',2700,2291,'85%',null,null,null,null,null,null,null,null,null,89,null],
+  ['130266203','México Makers','https://www.mexicomakers.com.mx/','TBD','24/06/2026','30/06/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',1700,793,'47%',null,null,null,null,null,null,null,null,null,100,null],
+  ['114380421','Jogs','https://jogsscrubsmx.com/','TBD','24/06/2026','30/06/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',1000,29,'3%',null,null,null,null,null,null,null,null,null,220,null],
+  ['571269960','Kanaus','https://www.kanaus.com','mismo ID','11/05/2026','26/06/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',1500,235,'16%',null,null,null,null,null,null,null,null,null,null,null],
+  ['304807701','Juguetibici','https://juguetibici.com/','mismo ID','26/05/2026','1/07/2026',null,'Verbal Yes','Shopify V0+V1','SHOPIFY','Envío Gratis',1000,350,'35%',null,null,null,null,null,null,null,null,null,null,null],
+  ['210055970','Fit Store','https://fitstore.com.mx/','mismo ID','28/05/2026','1/07/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',80,57,'62%',null,null,null,null,null,null,null,null,null,null,null],
+  ['316225732','KUHU Collares','https://kuhu.com.mx/','mismo ID','5/05/2026','1/07/2026',null,'Desarrollando','Partners','CHO API','Envío Gratis',150,89,'62%',null,null,null,null,null,null,null,null,null,null,null],
+  ['749851642','PrinT PV','https://printpv.com/','mismo ID','11/05/2026','1/07/2026',null,'Desarrollando','Shopify V0+V1','CHO API','Envío Gratis',200,194,'97%',null,null,null,null,null,null,null,null,null,null,null],
+  ['474451262','ETIFAST','https://www.etifast.com/','mismo ID','1/06/2026','1/07/2026',null,'Desarrollando','API Comercial','CHO API','Envío Gratis',250,109,'44%',null,null,null,null,null,null,null,null,null,null,null],
+  ['828662960','Lorenza','https://lorenza.mx/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['827968605','Gotta','https://gottamexico.com','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['1903731676','Rayo Negro','https://rayonegro.mx/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['602605928','FIXOEM','https://fixoem.com/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['392466008','Nación Tequila','https://naciontequila.com/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
+];
+// col indices
+const S={id:0,name:1,url:2,on:3,ini:4,live:5,churn:6,st:7,frente:8,sol:9,inc:10,
+  pot:11,l3m:12,sow:13,e1t:14,e1v:15,e2t:16,e2v:17,e3t:18,e3v:19,
+  mtdT:20,mtdV:21,mtdAR:22,fctV:23,fctAR:24};
+
+const ST_MAP={
+  'LIVE':'b-live','Churn':'b-churn','Carta Firmada':'b-signed','Carta Enviada':'b-sent',
+  'Verbal Yes':'b-verbal','Desarrollando':'b-dev','Reu técnica':'b-meeting'
+};
+
+function daysFromToday(dateStr){
+  if(!dateStr)return null;
+  const p=dateStr.split('/');
+  if(p.length!==3)return null;
+  const d=new Date(parseInt('20'+p[2].slice(-2)),parseInt(p[1])-1,parseInt(p[0]));
+  return Math.round((d-new Date(2026,5,24))/86400000);
+}
+function daysCell(dateStr,isChurn){
+  const d=daysFromToday(dateStr);
+  if(d===null)return'—';
+  if(isChurn)return`<span style="font-size:11px;color:#E23D3D">${dateStr}</span>`;
+  if(d<0)return`<span class="days-badge days-past">${Math.abs(d)}d atrás</span>`;
+  if(d===0)return`<span class="days-badge" style="background:#fff3cd;color:#856404">HOY</span>`;
+  if(d<=14)return`<span class="days-badge days-soon">en ${d}d</span>`;
+  return`<span class="days-badge days-future">en ${d}d</span>`;
+}
+function onCell(v){
+  if(!v||v==='—')return'<span class="on-tbd">—</span>';
+  if(v==='No')return'<span class="on-no">✗ No</span>';
+  if(v==='TBD')return'<span class="on-tbd">TBD</span>';
+  if(v.includes('diferente'))return'<span class="on-dif">⚡ Dif. ID</span>';
+  return'<span class="on-si">✓ Mismo ID</span>';
+}
+function solPillSeg(s){
+  if(s==='CHO PRO')return'<span class="sol-pro">CHO PRO</span>';
+  if(s==='CHO API')return'<span class="sol-api">CHO API</span>';
+  return'<span class="sol-sh">SHOPIFY</span>';
+}
+function nSeg(v){return v==null?'<span style="color:#ddd">—</span>':Number(v).toLocaleString('es-MX');}
+function arSeg(v){if(v==null)return'<span style="color:#ddd">—</span>';const c=v>=80?'ar-hi':v>=40?'ar-md':'ar-lo';return`<span class="${c}">${v}%</span>`;}
+
+let segActiveFilter='all';
+function segFilter(f,btn){
+  segActiveFilter=f;
+  document.querySelectorAll('.seg-fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSeg();
+}
+
+function renderSeg(){
+  const PIPE_ST=['Verbal Yes','Reu técnica','Desarrollando','Carta Firmada','Carta Enviada'];
+  let data=SEG.filter(r=>{
+    const st=r[S.st],sol=r[S.sol];
+    if(segActiveFilter==='all')return true;
+    if(segActiveFilter==='LIVE')return st==='LIVE';
+    if(segActiveFilter==='pipeline')return PIPE_ST.includes(st);
+    if(segActiveFilter==='Churn')return st==='Churn';
+    return sol===segActiveFilter;
+  });
+
+  // Sort: LIVE by MTD ships desc, pipeline by daysFromToday(live) asc, churn last
+  const ord={LIVE:0,Churn:99};PIPE_ST.forEach((s,i)=>ord[s]=i+1);
+  data=[...data].sort((a,b)=>{
+    const oa=ord[a[S.st]]??50, ob=ord[b[S.st]]??50;
+    if(oa!==ob)return oa-ob;
+    if(a[S.st]==='LIVE')return(b[S.mtdV]||0)-(a[S.mtdV]||0);
+    return(daysFromToday(a[S.live])||999)-(daysFromToday(b[S.live])||999);
+  });
+
+  // Summary counts
+  document.getElementById('cnt-live').textContent=SEG.filter(r=>r[S.st]==='LIVE').length;
+  document.getElementById('cnt-pipe').textContent=SEG.filter(r=>PIPE_ST.includes(r[S.st])).length;
+  document.getElementById('cnt-soon').textContent=SEG.filter(r=>{const d=daysFromToday(r[S.live]);return d!=null&&d>=0&&d<=30;}).length;
+  document.getElementById('cnt-churn').textContent=SEG.filter(r=>r[S.st]==='Churn').length;
+  document.getElementById('cnt-total').textContent=SEG.length;
+
+  // ── Frente pill helper ──
+  const FP_MAP={
+    'Biz Hub Pro':'fp-biz','Pro Comercial':'fp-pro','API Comercial':'fp-api',
+    'Shopify V0+V1':'fp-shp','Partners':'fp-par','Comercial':'fp-com'
+  };
+  function frentePill(f){
+    const cls=FP_MAP[f]||'fp-com';
+    return f&&f!=='—'?`<span class="fp ${cls}">${f}</span>`:'<span style="color:#bbb">—</span>';
+  }
+
+  const tbody=document.getElementById('seg-tbody');
+  tbody.innerHTML=data.map((r,idx)=>{
+    const st=r[S.st], isChurn=st==='Churn';
+    const ar1=r[S.e1t]&&r[S.e1v]?Math.round(r[S.e1v]/r[S.e1t]*100):null;
+    const ar2=r[S.e2t]&&r[S.e2v]?Math.round(r[S.e2v]/r[S.e2t]*100):null;
+    const ar3=r[S.e3t]&&r[S.e3v]?Math.round(r[S.e3v]/r[S.e3t]*100):null;
+    const urlShort=(r[S.url]||'').replace(/https?:\/\//,'').replace(/\/$/,'').substring(0,28);
+    // ── month cell shorthand (class + sep-l) ──
+    const m=(g,v,extra='')=>`<td class="center ${g}${extra}">${v}</td>`;
+    const ms=(g,v,extra='')=>`<td class="center ${g} sep-l${extra}">${v}</td>`;
+
+    return`<tr data-st="${st}" class="${isChurn?'tr-churn':''}">
+      <td class="sl">
+        <div class="sl-row">
+          ${numBadge(idx)}
+          <div>
+            <strong style="font-size:12px">${r[S.name]}</strong>
+            <a href="${r[S.url]}" target="_blank" style="display:block;font-size:10px;color:#009EE3;text-decoration:none">${urlShort}</a>
+            <span style="font-size:10px;color:#bbb">${r[S.id]}</span>
+          </div>
+        </div>
+      </td>
+      <td style="text-align:center;min-width:100px">${stBadgeG(st)}</td>
+      <td class="center">${onCell(r[S.on])}</td>
+      <td class="center" style="font-size:11px;color:#888">${r[S.ini]||'—'}</td>
+      <td class="center">${daysCell(r[S.live],false)}<br><span style="font-size:10px;color:#aaa">${r[S.live]}</span></td>
+      <td class="center">${isChurn?`<span style="font-size:11px;color:#E23D3D;font-weight:700">${r[S.churn]}</span>`:'<span style="color:#ddd">—</span>'}</td>
+      <td style="min-width:110px">${frentePill(r[S.frente])}</td>
+      <td>${solPillSeg(r[S.sol])}</td>
+      <td style="font-size:11px;color:#888">${r[S.inc]||'—'}</td>
+      <td class="center" style="font-weight:700">${nSeg(r[S.pot])}</td>
+      <td class="center" style="font-weight:700;color:#1565C0">${nSeg(r[S.l3m])}</td>
+      <td class="center">${r[S.sow]||'—'}</td>
+      ${ms('mc-ene',nSeg(r[S.e1t]))}${m('mc-ene',nSeg(r[S.e1v]),' mc-env')}${m('mc-ene',arSeg(ar1))}
+      ${ms('mc-feb',nSeg(r[S.e2t]))}${m('mc-feb',nSeg(r[S.e2v]),' mc-env')}${m('mc-feb',arSeg(ar2))}
+      ${ms('mc-mar',nSeg(r[S.e3t]))}${m('mc-mar',nSeg(r[S.e3v]),' mc-env')}${m('mc-mar',arSeg(ar3))}
+      ${ms('mc-jun',`<strong>${nSeg(r[S.mtdT])}</strong>`)}${m('mc-jun',nSeg(r[S.mtdV]),' mc-env')}${m('mc-jun',arSeg(r[S.mtdAR]))}
+      ${ms('mc-fct',nSeg(r[S.fctV]),' mc-env')}${m('mc-fct',arSeg(r[S.fctAR]))}
+    </tr>`;
+  }).join('');
+}
+
+initFilters();
+renderCharts();
+renderAcc();
+renderSeg();
+</script>
+</body>
+</html>
