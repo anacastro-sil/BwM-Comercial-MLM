@@ -259,6 +259,17 @@ select:focus{outline:none;border-color:var(--b);}
 <!-- ─── FILTER BAR ─── -->
 <div class="fbar">
   <div class="fg"><label>Año</label><select id="fY"><option>2026</option></select></div>
+  <div class="fg"><label>Mes</label>
+    <select id="fM" onchange="filterMes(this.value)">
+      <option value="all">Todos los meses</option>
+      <option value="2026-01">Ene 2026</option>
+      <option value="2026-02">Feb 2026</option>
+      <option value="2026-03">Mar 2026</option>
+      <option value="2026-04">Abr 2026</option>
+      <option value="2026-05">May 2026</option>
+      <option value="2026-06">Jun 2026</option>
+      <option value="2026-07">Jul 2026</option>
+    </select></div>
   <div class="fg"><label>Seller</label><select id="fS" onchange="apply_()"><option value="all">Todos los sellers</option></select></div>
   <div class="fg"><label>Canal</label>
     <select id="fC" onchange="apply_()">
@@ -286,14 +297,10 @@ select:focus{outline:none;border-color:var(--b);}
     <span class="chip dn" id="kpi-churn-chip">—</span></div>
   <div class="kc g"><div class="lbl">Shipments ME</div><div class="val">1,958</div>
     <div class="sub">Jun cerrado · Plan: 1,593</div><span class="chip up">▲ AR 219%</span></div>
-  <div class="kc o"><div class="lbl">AR% Entregado</div><div class="val">219%</div>
-    <div class="sub">Envíos/TPN CHO · jun cerrado</div><span class="chip up">▲ vs plan</span></div>
   <div class="kc"><div class="lbl">TPN Jun (cerrado)</div><div class="val">1,958</div>
     <div class="sub">Jun 2026 · CVR 5.6% · ER 10.8%</div></div>
-  <div class="kc r"><div class="lbl">Churn</div><div class="val">2</div>
-    <div class="sub">Vapotlan 03/06 · Metforce 30/06</div><span class="chip dn">▼ 11.1%</span></div>
-  <div class="kc gr"><div class="lbl">Meses en 2026</div><div class="val">6</div>
-    <div class="sub">ene 2026 → jun 2026</div></div>
+  <div class="kc r"><div class="lbl">Churn</div><div class="val" id="kpi-churn-val">2</div>
+    <div class="sub" id="kpi-churn-sub">Vapotlan 03/06 · Metforce 30/06</div><span class="chip dn" id="kpi-churn-pct">▼ 11.1%</span></div>
 </div>
 
 <!-- ═══════════ FARMING VIEW ═══════════ -->
@@ -932,6 +939,40 @@ function updateKPIs(){
   document.getElementById('kpi-live-sub').textContent=`de ${SEG.length} total · ${dd}/${mm}/${yy}`;
   document.getElementById('kpi-new-chip').textContent=`+${newClosed.length} new ${closedName}`;
   document.getElementById('kpi-churn-chip').textContent=`−${churnClosed.length} churn ${closedName}`;
+}
+
+function filterMes(val){
+  // ── Farming: abre solo el mes seleccionado en el accordion ──
+  document.querySelectorAll('.month-hdr').forEach(h=>{
+    const key=h.dataset.key;
+    if(!key)return;
+    if(val==='all'){
+      // restaurar: solo junio abierto por defecto
+      toggleAcc(key, key==='2026-06');
+    } else {
+      toggleAcc(key, key===val);
+    }
+  });
+
+  // ── Seguimiento: filtra sellers cuyo Go Live coincide con el mes ──
+  if(val==='all'){
+    renderSeg();
+    return;
+  }
+  const [y,m]=val.split('-').map(Number);
+  const prevFilter=segActiveFilter;
+  const tbody=document.getElementById('seg-tbody');
+  // Aplica el filtro de mes sobre la tabla actual
+  document.querySelectorAll('#seg-tbody tr').forEach(tr=>{
+    // leer go live de la celda (5ta td = índice 4)
+    const tds=tr.querySelectorAll('td');
+    if(!tds[4])return;
+    const txt=tds[4].textContent.trim(); // contiene "en Xd\nDD/MM/YYYY"
+    const match=txt.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if(!match){tr.style.display='none';return;}
+    const dm=parseInt(match[2]), dy=parseInt(match[3]);
+    tr.style.display=(dm===m&&dy===y)?'':'none';
+  });
 }
 
 initFilters();
