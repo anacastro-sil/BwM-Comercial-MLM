@@ -1139,6 +1139,68 @@ function filterMes(val){
 }
 
 // ── REUNIONES TAB ──
+// ── MEET_PIPE: todos los sellers del Histórico de Reuniones ──
+// {id, name, sol, frente, st, goLive, l3m}
+const MEET_PIPE=[
+  // ── LIVE ──
+  {id:'180838809', name:'BGS',               sol:'CHO PRO',  frente:'Biz Hub Pro',   st:'LIVE',              goLive:'15/10/2025',l3m:87},
+  {id:'454333952', name:'UpInn',             sol:'CHO PRO',  frente:'Pro Comercial', st:'LIVE',              goLive:'9/12/2025', l3m:86},
+  {id:'337842388', name:'Hanny Pulido',      sol:'CHO PRO',  frente:'Biz Hub Pro',   st:'LIVE',              goLive:'13/01/2026',l3m:74},
+  {id:'2087872279',name:'Ecopipo',           sol:'CHO PRO',  frente:'Biz Hub Pro',   st:'LIVE',              goLive:'10/02/2026',l3m:145},
+  {id:'585751061', name:'Toyo Foods',        sol:'CHO PRO',  frente:'Pro Comercial', st:'LIVE',              goLive:'11/03/2026',l3m:6},
+  {id:'118533758', name:'Faly Music',        sol:'CHO PRO',  frente:'Pro Comercial', st:'LIVE',              goLive:'28/04/2026',l3m:282},
+  {id:'1710476339',name:'DERMA',             sol:'CHO API',  frente:'API Comercial', st:'LIVE',              goLive:'28/04/2026',l3m:2},
+  {id:'52498882',  name:'FUNKITOY',          sol:'CHO API',  frente:'API Comercial', st:'LIVE',              goLive:'28/04/2026',l3m:36},
+  {id:'409589695', name:'Matcha Mexico',     sol:'CHO API',  frente:'API Comercial', st:'LIVE',              goLive:'29/04/2026',l3m:211},
+  {id:'76712625',  name:'UNIT Electronics',  sol:'CHO API',  frente:'API Comercial', st:'LIVE',              goLive:'3/06/2026', l3m:606},
+  {id:'1982630815',name:'Bubba',             sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'LIVE',              goLive:'8/06/2026', l3m:127},
+  {id:'436510625', name:'Takeya',            sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'LIVE',              goLive:'15/06/2026',l3m:28},
+  {id:'665562994', name:'Friso',             sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'LIVE',              goLive:'8/06/2026', l3m:640},
+  {id:'2623632502',name:'Casa Madero',       sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'LIVE',              goLive:'22/06/2026',l3m:286},
+  {id:'130266203', name:'México Makers',     sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'LIVE',              goLive:'30/06/2026',l3m:793},
+  {id:'114380421', name:'Jogs',              sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'LIVE',              goLive:'29/06/2026',l3m:29},
+  {id:'571269960', name:'Kanaus',            sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'LIVE',              goLive:'29/06/2026',l3m:235},
+  {id:'1642008136',name:'Replay Jeans Cole', sol:'SHOPIFY',  frente:'Comercial',     st:'LIVE',              goLive:'29/06/2026',l3m:null},
+  // ── VERBAL YES ──
+  {id:'304807701', name:'Juguetibici',       sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'Verbal Yes',        goLive:'7/07/2026', l3m:350},
+  {id:'195928609', name:'Lumbeard',          sol:'SHOPIFY',  frente:'Comercial',     st:'Verbal Yes',        goLive:'14/07/2026',l3m:1050},
+  {id:'277843620', name:'Alta Vertical',     sol:'SHOPIFY',  frente:'Comercial',     st:'Verbal Yes',        goLive:'9/07/2026', l3m:152},
+  {id:'200576445', name:'Akibara Express',   sol:'SHOPIFY',  frente:'Agencia/KAM',   st:'Verbal Yes',        goLive:'9/07/2026', l3m:199},
+  {id:'135168876', name:'Calista Academy',   sol:'CHO API',  frente:'KAM',           st:'Verbal Yes',        goLive:'9/07/2026', l3m:null},
+  {id:'1903731676',name:'Rayo Negro',        sol:'SHOPIFY',  frente:'Comercial',     st:'Verbal Yes',        goLive:'7/07/2026', l3m:null},
+  // ── REU TÉCNICA ──
+  {id:'1059122262',name:'Natural Slims',     sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'Reu técnica',       goLive:'1/07/2026', l3m:2291},
+  {id:'210055970', name:'Fit Store',         sol:'SHOPIFY',  frente:'Shopify V0+V1', st:'Reu técnica',       goLive:'1/07/2026', l3m:57},
+  {id:'828662960', name:'Lorenza',           sol:'SHOPIFY',  frente:'Comercial',     st:'Reu técnica',       goLive:'7/07/2026', l3m:null},
+  {id:'827968605', name:'Gotta',             sol:'SHOPIFY',  frente:'Comercial',     st:'Reu técnica',       goLive:'7/07/2026', l3m:98},
+  {id:'602605928', name:'FIXOEM',            sol:'SHOPIFY',  frente:'Comercial',     st:'Reu técnica',       goLive:'7/07/2026', l3m:1323},
+  {id:'392466008', name:'Nación Tequila',    sol:'SHOPIFY',  frente:'Comercial',     st:'Reu técnica',       goLive:'7/07/2026', l3m:25},
+  {id:'1675963838',name:'Bellisima',         sol:'SHOPIFY',  frente:'Comercial',     st:'Reu técnica',       goLive:'14/07/2026',l3m:415},
+  // ── EN INTEGRACIÓN ──
+  {id:'316225732', name:'KUHU Collares',     sol:'CHO API',  frente:'Partners',      st:'Desarrollando',     goLive:'1/07/2026', l3m:89},
+  {id:'749851642', name:'PrinT PV',          sol:'CHO API',  frente:'Shopify V0+V1', st:'Desarrollando',     goLive:'1/07/2026', l3m:194},
+  {id:'474451262', name:'ETIFAST',           sol:'CHO API',  frente:'API Comercial', st:'Desarrollando',     goLive:'1/07/2026', l3m:109},
+  // ── NEGOCIACIÓN ──
+  {id:'1904657372',name:'Coolthings / Myoppo',sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'308444977', name:'Tienda Depend',      sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'1697653952',name:'Kabrita / Ausnutria',sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
+  {id:'445520185', name:'Peony',              sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'1062962240',name:'Matter',             sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
+  {id:'443376267', name:'Quiubolee',          sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'612143258', name:'Kantocards',         sol:'SHOPIFY', frente:'KAM',          st:'Negociación',       goLive:null,        l3m:null},
+  {id:'1479977680',name:'Furbedz',            sol:'SHOPIFY', frente:'KAM',          st:'Negociación',       goLive:null,        l3m:null},
+  {id:'761893076', name:'Daniel Espinosa',    sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'1210091736',name:'Stylo México',       sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'653702722', name:'Beurer México',      sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
+  {id:'129259841', name:'La Tienda de Frida', sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'346529153', name:'Jeeka Beauty',       sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
+  {id:'83665027',  name:'Audiofilia',         sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
+  {id:'409943518', name:'Cleto Reyes MX',     sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
+  // ── REUNIÓN PROGRAMADA ──
+  {id:'81578277',  name:'Profoto MX',         sol:'SHOPIFY', frente:'COMERCIAL',    st:'Reunión Programada',goLive:null,        l3m:null},
+  {id:'2084221081',name:'DC Mex / HP',        sol:'SHOPIFY', frente:'KAM',          st:'Reunión Programada',goLive:null,        l3m:null},
+];
+
 let reuInit=false;
 const PIPE_STAGES=[
   {label:'Reunión Programada',  sts:['Reunión Programada'],   color:'#0277BD',bg:'#e1f5fe'},
@@ -1154,56 +1216,51 @@ const PIPE_STAGES=[
 function initReuCharts(){
   if(reuInit)return; reuInit=true;
 
-  // KPIs dinámicos
-  const live=SEG.filter(r=>r[S.st]==='LIVE');
-  const pipe=SEG.filter(r=>['Verbal Yes','Reu técnica','Desarrollando','Carta Firmada','Carta Enviada'].includes(r[S.st]));
-  const churnAll=SEG.filter(r=>r[S.st]==='Churn');
-  document.getElementById('reu-live').textContent=live.length;
-  document.getElementById('reu-live-sub').textContent=`de ${SEG.length} sellers totales`;
-  document.getElementById('reu-pipe').textContent=pipe.length;
-  document.getElementById('reu-churn').textContent=churnAll.length;
-  document.getElementById('reu-churn-names').textContent=churnAll.map(r=>r[S.name]).join(' · ');
+  // KPIs dinámicos desde MEET_PIPE
+  const mpLive =MEET_PIPE.filter(r=>r.st==='LIVE');
+  const mpPipe =MEET_PIPE.filter(r=>['Verbal Yes','Reu técnica','Desarrollando','Negociación','Negociación Caliente','Reunión Programada'].includes(r.st));
+  const mpChurn=SEG.filter(r=>r[S.st]==='Churn');
+  document.getElementById('reu-live').textContent=mpLive.length;
+  document.getElementById('reu-live-sub').textContent=`de ${MEET_PIPE.length} sellers en histórico`;
+  document.getElementById('reu-pipe').textContent=mpPipe.length;
+  document.getElementById('reu-churn').textContent=mpChurn.length;
+  document.getElementById('reu-churn-names').textContent=mpChurn.map(r=>r[S.name]).join(' · ');
 
   // Bar chart — reuniones por mes y equipo
   new Chart(document.getElementById('cReuBar').getContext('2d'),{
     type:'bar',
     data:{
-      labels:['Ene','Feb','Mar','Abr','May*','Jun*'],
+      labels:['Ene','Feb','Mar','Abr','May*','Jun'],
       datasets:[
-        {label:'Comercial', data:[33,17,15,20,0,0], backgroundColor:'#3483FA'},
-        {label:'KAMs',      data:[0,2,1,3,0,0],     backgroundColor:'#00A650'},
-        {label:'BizHub',    data:[12,4,1,5,0,0],     backgroundColor:'#FFB300'},
+        {label:'Comercial',data:[33,17,15,20,0,0],backgroundColor:'#3483FA'},
+        {label:'KAMs',     data:[0,2,1,3,0,0],    backgroundColor:'#00A650'},
+        {label:'BizHub',   data:[12,4,1,5,0,0],   backgroundColor:'#FFB300'},
       ]
     },
-    options:{
-      responsive:true,maintainAspectRatio:true,
-      plugins:{legend:{position:'top'},tooltip:{mode:'index'}},
-      scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,ticks:{stepSize:10}}},
-    }
+    options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{mode:'index'}},
+             scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,ticks:{stepSize:10}}}}
   });
 
-  // Donut — pipeline actual (dinámico desde SEG)
+  // Donut — desde MEET_PIPE
   const pLabels=PIPE_STAGES.map(s=>s.label);
-  const pCounts=PIPE_STAGES.map(s=>SEG.filter(r=>s.sts.includes(r[S.st])).length);
+  const pCounts=PIPE_STAGES.map(s=>MEET_PIPE.filter(r=>s.sts.includes(r.st)).length);
   const pColors=PIPE_STAGES.map(s=>s.color);
   new Chart(document.getElementById('cReuPipe').getContext('2d'),{
     type:'doughnut',
     data:{labels:pLabels,datasets:[{data:pCounts,backgroundColor:pColors,borderWidth:2,borderColor:'#fff'}]},
-    options:{
-      responsive:true,cutout:'58%',
-      plugins:{legend:{position:'right',labels:{font:{size:11},padding:12}},
-               tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} sellers`}}}
-    }
+    options:{responsive:true,cutout:'58%',
+             plugins:{legend:{position:'right',labels:{font:{size:11},padding:12}},
+                      tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} sellers`}}}}
   });
 
-  // Pipeline board
+  // Pipeline board desde MEET_PIPE
   const board=document.getElementById('reu-board');
   PIPE_STAGES.forEach(stage=>{
-    const sellers=SEG.filter(r=>stage.sts.includes(r[S.st]));
+    const sellers=MEET_PIPE.filter(r=>stage.sts.includes(r.st));
     const col=document.createElement('div');
-    col.style.cssText=`background:${stage.bg};border-radius:10px;padding:12px;border-top:4px solid ${stage.color}`;
+    col.style.cssText=`background:${stage.bg};border-radius:10px;padding:12px;border-top:4px solid ${stage.color};min-width:180px`;
     col.innerHTML=`
-      <div style="font-weight:700;font-size:12px;color:${stage.color};margin-bottom:8px;display:flex;justify-content:space-between">
+      <div style="font-weight:700;font-size:12px;color:${stage.color};margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
         <span>${stage.label}</span>
         <span style="background:${stage.color};color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px">${sellers.length}</span>
       </div>
@@ -1211,9 +1268,10 @@ function initReuCharts(){
         ?`<div style="color:#bbb;font-size:11px;font-style:italic">Sin sellers</div>`
         :sellers.map(r=>`
           <div style="background:#fff;border-radius:6px;padding:6px 8px;margin-bottom:5px;font-size:11px;border-left:3px solid ${stage.color}">
-            <div style="font-weight:600">${r[S.name]}</div>
-            <div style="color:#888;font-size:10px">${r[S.sol]} · Go Live: ${r[S.live]}</div>
-            ${r[S.l3m]?`<div style="color:#555;font-size:10px">L3M: ${r[S.l3m].toLocaleString('es-MX')} TPN</div>`:''}
+            <div style="font-weight:600">${r.name}</div>
+            <div style="color:#888;font-size:10px">${r.sol} · ${r.frente}</div>
+            ${r.goLive?`<div style="color:#555;font-size:10px">Go Live: ${r.goLive}</div>`:''}
+            ${r.l3m?`<div style="color:#3483FA;font-size:10px;font-weight:600">L3M: ${r.l3m.toLocaleString('es-MX')} TPN</div>`:''}
           </div>`).join('')
       }`;
     board.appendChild(col);
