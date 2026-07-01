@@ -253,7 +253,7 @@ select:focus{outline:none;border-color:var(--b);}
   <svg width="42" height="42" viewBox="0 0 42 42"><rect width="42" height="42" rx="8" fill="#009EE3"/>
     <text x="21" y="28" text-anchor="middle" fill="white" font-size="17" font-weight="bold">MP</text></svg>
   <div><h1>BWM Sellers — Plan, Adquisición &amp; Farming</h1><p>Envíos · KPIs · Tendencia · México</p></div>
-  <div class="hdr-r">Actualizado: 23/06/2026 MTD<br><span class="hdr-badge dn">▼ 47% vs Plan Jun</span></div>
+  <div class="hdr-r">Actualizado: 25/06/2026 MTD<br><span class="hdr-badge dn">▼ vs Plan Jun</span></div>
 </div>
 
 <!-- ─── FILTER BAR ─── -->
@@ -280,16 +280,16 @@ select:focus{outline:none;border-color:var(--b);}
 
 <!-- ─── KPI ROW ─── -->
 <div class="krow">
-  <div class="kc"><div class="lbl">Sellers Activos</div><div class="val">20</div>
-    <div class="sub">de 29 total · jun 2026</div><span class="chip fl">4 nuevos</span></div>
-  <div class="kc g"><div class="lbl">Shipments ME</div><div class="val">813</div>
-    <div class="sub">MTD 23/06 · Plan: 1,537</div><span class="chip up">▲ 36% día equiv.</span></div>
-  <div class="kc o"><div class="lbl">AR% Entregado</div><div class="val">36%</div>
-    <div class="sub">sellers activos · jun MTD</div><span class="chip nt">Meta: ~53%</span></div>
-  <div class="kc"><div class="lbl">TPN MP</div><div class="val">2,254</div>
-    <div class="sub">jun 2026 MTD</div></div>
-  <div class="kc r"><div class="lbl">Churn</div><div class="val">1</div>
-    <div class="sub">Vapotlan · 03/06/2026</div><span class="chip dn">▼ 3%</span></div>
+  <div class="kc"><div class="lbl">Sellers Activos</div><div class="val">18</div>
+    <div class="sub">de 34 total · 26/06/2026</div><span class="chip fl">2 nuevos jun</span></div>
+  <div class="kc g"><div class="lbl">Shipments ME</div><div class="val">1,930</div>
+    <div class="sub">MTD 25/06 · Plan: 1,593</div><span class="chip up">▲ AR 219%</span></div>
+  <div class="kc o"><div class="lbl">AR% Entregado</div><div class="val">219%</div>
+    <div class="sub">Envíos/TPN CHO · jun MTD</div><span class="chip up">▲ vs jun</span></div>
+  <div class="kc"><div class="lbl">TPN CHO</div><div class="val">880</div>
+    <div class="sub">MTD 25/06 · CVR 5.6% · ER 10.8%</div></div>
+  <div class="kc r"><div class="lbl">Churn</div><div class="val">2</div>
+    <div class="sub">Vapotlan 03/06 · Metforce 30/06</div><span class="chip dn">▼ 2 acum.</span></div>
   <div class="kc gr"><div class="lbl">Meses en 2026</div><div class="val">6</div>
     <div class="sub">ene 2026 → jun 2026</div></div>
 </div>
@@ -739,7 +739,7 @@ const SEG=[
   ['1710476339','DERMA','https://derma-depot.mx/','mismo ID','10/03/2026','28/04/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',400,2,'2%',0,0,0,0,0,0,10,12,120,12,388],
   ['52498882','FUNKITOY','https://funkitoy.mx/','mismo ID','10/03/2026','28/04/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',100,36,'36%',null,null,null,null,null,null,25,12,48,28,1399],
   ['409589695','Matcha Mexico','https://www.matchamexico.mx/','mismo ID','10/03/2026','29/04/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',200,211,'106%',null,null,null,null,null,null,145,113,78,234,557],
-  ['417923030','Metforce','https://metforce.com.mx/','mismo ID','17/03/2026','6/05/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',400,20,'5%',null,null,null,null,null,null,5,5,100,14,721],
+  ['417923030','Metforce','https://metforce.com.mx/','mismo ID','17/03/2026','6/05/2026','30/06/2026','Churn','API Comercial','CHO API','Cashback $750usd',400,20,'5%',null,null,null,null,null,null,5,5,100,14,721],
   ['5103803','Vapotlan','https://vapotlan.com/','No','24/03/2026','15/05/2026','03/06/2026','Churn','API Comercial','CHO API','Cashback $750usd',250,330,'132%',null,null,null,null,null,null,282,59,21,96,181],
   ['76712625','UNIT Electronics','https://uelectronics.com','mismo ID','11/05/2026','3/06/2026',null,'LIVE','API Comercial','CHO API','Cashback $750usd',1200,606,'51%',null,null,null,null,null,null,587,134,23,18,17],
   ['1982630815','Bubba','https://bubbamexico.com/','mismo ID','26/05/2026','8/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',280,127,'45%',null,null,null,null,null,null,69,8,12,76,null],
@@ -747,8 +747,8 @@ const SEG=[
   ['665562994','Friso','https://www.tiendafriso.com.mx/','diferente ID','2/06/2026','8/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',1400,640,'46%',null,null,null,null,null,null,275,217,79,240,null],
   ['2623632502','Casa Madero','https://madero.com/tienda/','No','26/05/2026','22/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',500,286,'57%',null,null,null,null,null,null,337,38,11,0,null],
   ['1059122262','Natural Slims','https://www.tiendanaturalslim.com/','mismo ID','26/06/2026','1/07/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',2700,2291,'85%',null,null,null,null,null,null,null,null,null,89,null],
-  ['130266203','México Makers','https://www.mexicomakers.com.mx/','TBD','24/06/2026','30/06/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',1700,793,'47%',null,null,null,null,null,null,null,null,null,100,null],
-  ['114380421','Jogs','https://jogsscrubsmx.com/','TBD','24/06/2026','30/06/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',1000,29,'3%',null,null,null,null,null,null,null,null,null,220,null],
+  ['130266203','México Makers','https://www.mexicomakers.com.mx/','TBD','24/06/2026','30/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',1700,793,'47%',null,null,null,null,null,null,null,null,null,100,null],
+  ['114380421','Jogs','https://jogsscrubsmx.com/','TBD','24/06/2026','29/06/2026',null,'LIVE','Shopify V0+V1','SHOPIFY','Envío Gratis',1000,29,'3%',null,null,null,null,null,null,null,null,null,220,null],
   ['571269960','Kanaus','https://www.kanaus.com','mismo ID','11/05/2026','26/06/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',1500,235,'16%',null,null,null,null,null,null,null,null,null,null,null],
   ['304807701','Juguetibici','https://juguetibici.com/','mismo ID','26/05/2026','1/07/2026',null,'Verbal Yes','Shopify V0+V1','SHOPIFY','Envío Gratis',1000,350,'35%',null,null,null,null,null,null,null,null,null,null,null],
   ['210055970','Fit Store','https://fitstore.com.mx/','mismo ID','28/05/2026','1/07/2026',null,'Reu técnica','Shopify V0+V1','SHOPIFY','Envío Gratis',80,57,'62%',null,null,null,null,null,null,null,null,null,null,null],
@@ -756,10 +756,14 @@ const SEG=[
   ['749851642','PrinT PV','https://printpv.com/','mismo ID','11/05/2026','1/07/2026',null,'Desarrollando','Shopify V0+V1','CHO API','Envío Gratis',200,194,'97%',null,null,null,null,null,null,null,null,null,null,null],
   ['474451262','ETIFAST','https://www.etifast.com/','mismo ID','1/06/2026','1/07/2026',null,'Desarrollando','API Comercial','CHO API','Envío Gratis',250,109,'44%',null,null,null,null,null,null,null,null,null,null,null],
   ['828662960','Lorenza','https://lorenza.mx/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
-  ['827968605','Gotta','https://gottamexico.com','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['827968605','Gotta','https://gottamexico.com','mismo ID','1/07/2026','7/07/2026',null,'Reu técnica','Comercial','SHOPIFY','—',null,98,'—',null,null,null,null,null,null,null,null,null,null,null],
   ['1903731676','Rayo Negro','https://rayonegro.mx/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
-  ['602605928','FIXOEM','https://fixoem.com/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
-  ['392466008','Nación Tequila','https://naciontequila.com/','mismo ID','1/07/2026','7/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,null,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['602605928','FIXOEM','https://fixoem.com/','mismo ID','1/07/2026','7/07/2026',null,'Reu técnica','Comercial','SHOPIFY','—',null,1323,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['392466008','Nación Tequila','https://naciontequila.com/','mismo ID','1/07/2026','7/07/2026',null,'Reu técnica','Comercial','SHOPIFY','—',null,25,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['1675963838','Bellisima','https://bellisima.mx/','No','1/07/2026','1/07/2026',null,'Reu técnica','Comercial','SHOPIFY','—',null,415,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['195928609','Lumbeard','https://lumbeard.mx/','mismo ID','1/07/2026','1/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,1050,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['277843620','Alta Vertical','https://altavertical.mx/','mismo ID','2/07/2026','2/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,152,'—',null,null,null,null,null,null,null,null,null,null,null],
+  ['200576445','Akibara Express','https://akibara.mx/','mismo ID','2/07/2026','2/07/2026',null,'Verbal Yes','Comercial','SHOPIFY','—',null,199,'—',null,null,null,null,null,null,null,null,null,null,null],
 ];
 // col indices
 const S={id:0,name:1,url:2,on:3,ini:4,live:5,churn:6,st:7,frente:8,sol:9,inc:10,
