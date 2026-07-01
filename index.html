@@ -291,14 +291,11 @@ select:focus{outline:none;border-color:var(--b);}
 
 <!-- ─── KPI ROW ─── -->
 <div class="krow">
-  <div class="kc"><div class="lbl">Sellers Activos</div><div class="val" id="kpi-live-val">—</div>
-    <div class="sub" id="kpi-live-sub">calculando...</div>
-    <span class="chip up" id="kpi-new-chip">—</span>
-    <span class="chip dn" id="kpi-churn-chip">—</span></div>
   <div class="kc g"><div class="lbl">Shipments ME</div><div class="val">1,958</div>
     <div class="sub">Jun cerrado · Plan: 1,593</div><span class="chip up">▲ AR 219%</span></div>
-  <div class="kc"><div class="lbl">TPN Jun (cerrado)</div><div class="val">1,958</div>
-    <div class="sub">Jun 2026 · CVR 5.6% · ER 10.8%</div></div>
+  <div class="kc"><div class="lbl">Sellers Activos</div><div class="val" id="kpi-live-val">—</div>
+    <div class="sub" id="kpi-live-sub">calculando...</div>
+    <span class="chip up" id="kpi-new-chip">—</span></div>
   <div class="kc r"><div class="lbl">Churn</div><div class="val" id="kpi-churn-val">2</div>
     <div class="sub" id="kpi-churn-sub">Vapotlan 03/06 · Metforce 30/06</div><span class="chip dn" id="kpi-churn-pct">▼ 11.1%</span></div>
 </div>
@@ -938,7 +935,6 @@ function updateKPIs(){
   document.getElementById('kpi-live-val').textContent=live.length;
   document.getElementById('kpi-live-sub').textContent=`de ${SEG.length} total · ${dd}/${mm}/${yy}`;
   document.getElementById('kpi-new-chip').textContent=`+${newClosed.length} new ${closedName}`;
-  document.getElementById('kpi-churn-chip').textContent=`−${churnClosed.length} churn ${closedName}`;
 }
 
 function filterMes(val){
