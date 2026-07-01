@@ -519,7 +519,7 @@ select:focus{outline:none;border-color:var(--b);}
 const TC={ALZA:'#C6EFCE',BAJA:'#FFD7D7',CHURN:'#FF6B6B',NUEVO:'#DDEBF7',ESTABLE:'#FFFFC0'};
 
 const MONTHS=[
-  {key:'2026-06',label:'jun 2026',isMTD:true, sellers:20,ships:813,tpn:2254,ar:36, prev:595},
+  {key:'2026-06',label:'jun 2026',isMTD:false,sellers:18,ships:1958,tpn:1958,ar:null,prev:595},
   {key:'2026-05',label:'may 2026',             sellers:11,ships:803,tpn:null,ar:null,prev:311,noDetail:true},
   {key:'2026-04',label:'abr 2026',             sellers:9, ships:311,tpn:null,ar:null,prev:253,aprOnly:true},
   {key:'2026-03',label:'mar 2026',             sellers:5, ships:253,tpn:null,ar:81,  prev:498},
@@ -900,75 +900,74 @@ function renderSeg(){
   }).join('');
 }
 
-function updateKPIs(){
-  const MONTHS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  const today=new Date();
-  // Mes cerrado = mes anterior al actual
-  const closedM=today.getMonth()===0?11:today.getMonth()-1;
-  const closedY=today.getMonth()===0?today.getFullYear()-1:today.getFullYear();
-  const closedName=MONTHS[closedM];
+// Datos históricos por mes
+const MONTH_KPI={
+  'all':     {ships:1958,sellers:18,label:'Jun cerrado · Plan: 1,593'},
+  '2026-01': {ships:654, sellers:4, label:'Ene 2026 cerrado'},
+  '2026-02': {ships:498, sellers:5, label:'Feb 2026 cerrado'},
+  '2026-03': {ships:253, sellers:5, label:'Mar 2026 cerrado'},
+  '2026-04': {ships:311, sellers:9, label:'Abr 2026 cerrado'},
+  '2026-05': {ships:803, sellers:11,label:'May 2026 cerrado'},
+  '2026-06': {ships:1958,sellers:18,label:'Jun cerrado · Plan: 1,593'},
+  '2026-07': {ships:null,sellers:null,label:'Jul 2026 · en curso'},
+};
+const MNAMES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
-  function parseD(str){
-    if(!str)return null;
-    const p=str.split('/');
-    if(p.length!==3)return null;
-    const y=parseInt(p[2])<100?2000+parseInt(p[2]):parseInt(p[2]);
-    return new Date(y,parseInt(p[1])-1,parseInt(p[0]));
+function parseD(str){
+  if(!str)return null;
+  const p=str.split('/');
+  if(p.length!==3)return null;
+  const y=parseInt(p[2])<100?2000+parseInt(p[2]):parseInt(p[2]);
+  return new Date(y,parseInt(p[1])-1,parseInt(p[0]));
+}
+
+function updateKPIs(monthKey){
+  const key=monthKey||'all';
+  const d=MONTH_KPI[key]||MONTH_KPI['all'];
+  let mi,my;
+  if(key==='all'||key==='2026-06'){
+    const t=new Date(); mi=t.getMonth()===0?11:t.getMonth()-1; my=t.getMonth()===0?t.getFullYear()-1:t.getFullYear();
+  } else {
+    const [y,m]=key.split('-'); mi=parseInt(m)-1; my=parseInt(y);
   }
-
-  const live=SEG.filter(r=>r[S.st]==='LIVE');
-
-  const newClosed=SEG.filter(r=>{
-    const d=parseD(r[S.live]);
-    return d&&d.getMonth()===closedM&&d.getFullYear()===closedY;
-  });
-
-  const churnClosed=SEG.filter(r=>{
-    const d=parseD(r[S.churn]);
-    return d&&d.getMonth()===closedM&&d.getFullYear()===closedY;
-  });
-
-  const dd=String(today.getDate()).padStart(2,'0');
-  const mm=String(today.getMonth()+1).padStart(2,'0');
-  const yy=today.getFullYear();
-
-  document.getElementById('kpi-live-val').textContent=live.length;
-  document.getElementById('kpi-live-sub').textContent=`de ${SEG.length} total · ${dd}/${mm}/${yy}`;
-  document.getElementById('kpi-new-chip').textContent=`+${newClosed.length} new ${closedName}`;
+  const mn=MNAMES[mi];
+  // Shipments ME
+  const sEl=document.querySelector('.kc.g .val'), subEl=document.querySelector('.kc.g .sub');
+  if(sEl) sEl.textContent=d.ships!=null?d.ships.toLocaleString('es-MX'):'—';
+  if(subEl) subEl.textContent=d.label;
+  // Sellers activos
+  const liveCnt=d.sellers!=null?d.sellers:SEG.filter(r=>r[S.st]==='LIVE').length;
+  document.getElementById('kpi-live-val').textContent=liveCnt;
+  document.getElementById('kpi-live-sub').textContent=`${mn} ${my} · de ${SEG.length} total`;
+  // New sellers ese mes
+  const newM=SEG.filter(r=>{const dd=parseD(r[S.live]);return dd&&dd.getMonth()===mi&&dd.getFullYear()===my;});
+  document.getElementById('kpi-new-chip').textContent=`+${newM.length} new ${mn}`;
+  // Churn ese mes
+  const churnM=SEG.filter(r=>{const dd=parseD(r[S.churn]);return dd&&dd.getMonth()===mi&&dd.getFullYear()===my;});
+  const cEl=document.getElementById('kpi-churn-val'), cSub=document.getElementById('kpi-churn-sub');
+  if(cEl) cEl.textContent=churnM.length;
+  if(cSub) cSub.textContent=churnM.length>0?churnM.map(r=>r[S.name]).join(' · '):`Sin churn en ${mn}`;
 }
 
 function filterMes(val){
-  // ── Farming: abre solo el mes seleccionado en el accordion ──
+  // Farming: abre el mes seleccionado en accordion
   document.querySelectorAll('.month-hdr').forEach(h=>{
-    const key=h.dataset.key;
-    if(!key)return;
-    if(val==='all'){
-      // restaurar: solo junio abierto por defecto
-      toggleAcc(key, key==='2026-06');
-    } else {
-      toggleAcc(key, key===val);
-    }
+    const key=h.dataset.key; if(!key)return;
+    toggleAcc(key, val==='all'?key==='2026-06':key===val);
   });
-
-  // ── Seguimiento: filtra sellers cuyo Go Live coincide con el mes ──
-  if(val==='all'){
-    renderSeg();
-    return;
+  // Seguimiento: filtra por Go Live del mes
+  renderSeg();
+  if(val!=='all'){
+    const [y,m]=val.split('-').map(Number);
+    document.querySelectorAll('#seg-tbody tr').forEach(tr=>{
+      const tds=tr.querySelectorAll('td'); if(!tds[4])return;
+      const match=tds[4].textContent.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if(!match){tr.style.display='none';return;}
+      tr.style.display=(parseInt(match[2])===m&&parseInt(match[3])===y)?'':'none';
+    });
   }
-  const [y,m]=val.split('-').map(Number);
-  const prevFilter=segActiveFilter;
-  const tbody=document.getElementById('seg-tbody');
-  // Aplica el filtro de mes sobre la tabla actual
-  document.querySelectorAll('#seg-tbody tr').forEach(tr=>{
-    // leer go live de la celda (5ta td = índice 4)
-    const tds=tr.querySelectorAll('td');
-    if(!tds[4])return;
-    const txt=tds[4].textContent.trim(); // contiene "en Xd\nDD/MM/YYYY"
-    const match=txt.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if(!match){tr.style.display='none';return;}
-    const dm=parseInt(match[2]), dy=parseInt(match[3]);
-    tr.style.display=(dm===m&&dy===y)?'':'none';
-  });
+  // KPIs: actualizar con datos del mes
+  updateKPIs(val);
 }
 
 initFilters();
