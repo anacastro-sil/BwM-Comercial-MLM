@@ -280,10 +280,10 @@ select:focus{outline:none;border-color:var(--b);}
 
 <!-- ─── KPI ROW ─── -->
 <div class="krow">
-  <div class="kc"><div class="lbl">Sellers Activos</div><div class="val">18</div>
-    <div class="sub">de 38 total · 01/07/2026</div>
-    <span class="chip up">+4 new jun</span>
-    <span class="chip dn">−2 churn jun</span></div>
+  <div class="kc"><div class="lbl">Sellers Activos</div><div class="val" id="kpi-live-val">—</div>
+    <div class="sub" id="kpi-live-sub">calculando...</div>
+    <span class="chip up" id="kpi-new-chip">—</span>
+    <span class="chip dn" id="kpi-churn-chip">—</span></div>
   <div class="kc g"><div class="lbl">Shipments ME</div><div class="val">1,958</div>
     <div class="sub">Jun cerrado · Plan: 1,593</div><span class="chip up">▲ AR 219%</span></div>
   <div class="kc o"><div class="lbl">AR% Entregado</div><div class="val">219%</div>
@@ -896,10 +896,49 @@ function renderSeg(){
   }).join('');
 }
 
+function updateKPIs(){
+  const MONTHS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const today=new Date();
+  // Mes cerrado = mes anterior al actual
+  const closedM=today.getMonth()===0?11:today.getMonth()-1;
+  const closedY=today.getMonth()===0?today.getFullYear()-1:today.getFullYear();
+  const closedName=MONTHS[closedM];
+
+  function parseD(str){
+    if(!str)return null;
+    const p=str.split('/');
+    if(p.length!==3)return null;
+    const y=parseInt(p[2])<100?2000+parseInt(p[2]):parseInt(p[2]);
+    return new Date(y,parseInt(p[1])-1,parseInt(p[0]));
+  }
+
+  const live=SEG.filter(r=>r[S.st]==='LIVE');
+
+  const newClosed=SEG.filter(r=>{
+    const d=parseD(r[S.live]);
+    return d&&d.getMonth()===closedM&&d.getFullYear()===closedY;
+  });
+
+  const churnClosed=SEG.filter(r=>{
+    const d=parseD(r[S.churn]);
+    return d&&d.getMonth()===closedM&&d.getFullYear()===closedY;
+  });
+
+  const dd=String(today.getDate()).padStart(2,'0');
+  const mm=String(today.getMonth()+1).padStart(2,'0');
+  const yy=today.getFullYear();
+
+  document.getElementById('kpi-live-val').textContent=live.length;
+  document.getElementById('kpi-live-sub').textContent=`de ${SEG.length} total · ${dd}/${mm}/${yy}`;
+  document.getElementById('kpi-new-chip').textContent=`+${newClosed.length} new ${closedName}`;
+  document.getElementById('kpi-churn-chip').textContent=`−${churnClosed.length} churn ${closedName}`;
+}
+
 initFilters();
 renderCharts();
 renderAcc();
 renderSeg();
+updateKPIs();
 </script>
 </body>
 </html>
