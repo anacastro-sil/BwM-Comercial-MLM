@@ -1141,12 +1141,14 @@ function filterMes(val){
 // ── REUNIONES TAB ──
 let reuInit=false;
 const PIPE_STAGES=[
-  {label:'Verbal Yes',         sts:['Verbal Yes'],      color:'#2E7D32',bg:'#f1f8e9'},
-  {label:'Negociación Caliente',sts:['Carta Firmada'],  color:'#E65100',bg:'#fff3e0'},
-  {label:'Negociación',        sts:['Carta Enviada'],   color:'#F57F17',bg:'#fffde7'},
-  {label:'Reu técnica',        sts:['Reu técnica'],     color:'#FB8C00',bg:'#fff8f0'},
-  {label:'En integración',     sts:['Desarrollando'],   color:'#7B1FA2',bg:'#f3e5f5'},
-  {label:'LIVE',               sts:['LIVE'],            color:'#00A650',bg:'#e6f7ee'},
+  {label:'Reunión Programada',  sts:['Reunión Programada'],   color:'#0277BD',bg:'#e1f5fe'},
+  {label:'Negociación',         sts:['Negociación'],          color:'#F57F17',bg:'#fff8e1'},
+  {label:'Negociación Caliente',sts:['Negociación Caliente'], color:'#E65100',bg:'#fbe9e7'},
+  {label:'Verbal Yes',          sts:['Verbal Yes'],           color:'#2E7D32',bg:'#f1f8e9'},
+  {label:'Reu técnica',         sts:['Reu técnica'],          color:'#FB8C00',bg:'#fff3e0'},
+  {label:'En integración',      sts:['Desarrollando'],        color:'#7B1FA2',bg:'#f3e5f5'},
+  {label:'Lost',                sts:['Lost'],                 color:'#757575',bg:'#f5f5f5'},
+  {label:'LIVE',                sts:['LIVE'],                 color:'#00A650',bg:'#e6f7ee'},
 ];
 
 function initReuCharts(){
