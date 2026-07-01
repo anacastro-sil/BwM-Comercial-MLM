@@ -1136,6 +1136,8 @@ function filterMes(val){
   }
   // KPIs: actualizar con datos del mes
   updateKPIs(val);
+  // Pipeline board: actualizar si la pestaña Reuniones está activa
+  if(reuInit) renderPipeBoard(val);
 }
 
 // ── REUNIONES TAB ──
@@ -1181,24 +1183,27 @@ const MEET_PIPE=[
   {id:'749851642', name:'PrinT PV',          sol:'CHO API',  frente:'Shopify V0+V1', st:'Desarrollando',     goLive:'1/07/2026', l3m:194},
   {id:'474451262', name:'ETIFAST',           sol:'CHO API',  frente:'API Comercial', st:'Desarrollando',     goLive:'1/07/2026', l3m:109},
   // ── NEGOCIACIÓN ──
-  {id:'1904657372',name:'Coolthings / Myoppo',sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'308444977', name:'Tienda Depend',      sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'1697653952',name:'Kabrita / Ausnutria',sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
-  {id:'445520185', name:'Peony',              sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'1062962240',name:'Matter',             sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
-  {id:'443376267', name:'Quiubolee',          sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'612143258', name:'Kantocards',         sol:'SHOPIFY', frente:'KAM',          st:'Negociación',       goLive:null,        l3m:null},
-  {id:'1479977680',name:'Furbedz',            sol:'SHOPIFY', frente:'KAM',          st:'Negociación',       goLive:null,        l3m:null},
-  {id:'761893076', name:'Daniel Espinosa',    sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'1210091736',name:'Stylo México',       sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'653702722', name:'Beurer México',      sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
-  {id:'129259841', name:'La Tienda de Frida', sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'346529153', name:'Jeeka Beauty',       sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
-  {id:'83665027',  name:'Audiofilia',         sol:'SHOPIFY', frente:'COMERCIAL',    st:'Negociación',       goLive:null,        l3m:null},
-  {id:'409943518', name:'Cleto Reyes MX',     sol:'SHOPIFY', frente:'BIZHUB',       st:'Negociación',       goLive:null,        l3m:null},
+  {id:'1904657372',name:'Coolthings / Myoppo',sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'308444977', name:'Tienda Depend',      sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'1697653952',name:'Kabrita / Ausnutria',sol:'SHOPIFY',frente:'BIZHUB',  st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'445520185', name:'Peony',              sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'1062962240',name:'Matter',             sol:'SHOPIFY',frente:'BIZHUB',  st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'443376267', name:'Quiubolee',          sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'1479977680',name:'Furbedz',            sol:'SHOPIFY',frente:'KAM',     st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'761893076', name:'Daniel Espinosa',    sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'1210091736',name:'Stylo México',       sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'653702722', name:'Beurer México',      sol:'SHOPIFY',frente:'BIZHUB',  st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'129259841', name:'La Tienda de Frida', sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'346529153', name:'Jeeka Beauty',       sol:'SHOPIFY',frente:'BIZHUB',  st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'83665027',  name:'Audiofilia',         sol:'SHOPIFY',frente:'COMERCIAL',st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  {id:'409943518', name:'Cleto Reyes MX',     sol:'SHOPIFY',frente:'BIZHUB',  st:'Negociación',       goLive:null,mes:'2026-06',l3m:null},
+  // ── NEGOCIACIÓN CALIENTE ──
+  {id:'612143258', name:'Kantocards',         sol:'SHOPIFY',frente:'KAM',     st:'Negociación Caliente',goLive:null,mes:'2026-06',l3m:null},
   // ── REUNIÓN PROGRAMADA ──
-  {id:'81578277',  name:'Profoto MX',         sol:'SHOPIFY', frente:'COMERCIAL',    st:'Reunión Programada',goLive:null,        l3m:null},
-  {id:'2084221081',name:'DC Mex / HP',        sol:'SHOPIFY', frente:'KAM',          st:'Reunión Programada',goLive:null,        l3m:null},
+  {id:'81578277',  name:'Profoto MX',         sol:'SHOPIFY',frente:'COMERCIAL',st:'Reunión Programada',goLive:null,mes:'2026-06',l3m:null},
+  {id:'2084221081',name:'DC Mex / HP',        sol:'SHOPIFY',frente:'KAM',     st:'Reunión Programada',goLive:null,mes:'2026-06',l3m:null},
+  // ── LOST ──
+  {id:'',          name:'FLIP',               sol:'SHOPIFY',frente:'COMERCIAL',st:'Lost',              goLive:null,mes:'2026-06',l3m:null},
 ];
 
 let reuInit=false;
@@ -1253,10 +1258,30 @@ function initReuCharts(){
                       tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} sellers`}}}}
   });
 
-  // Pipeline board desde MEET_PIPE
+  renderPipeBoard('all');
+}
+
+function renderPipeBoard(mesFilter){
   const board=document.getElementById('reu-board');
+  board.innerHTML='';
+  // Filtrar por mes si aplica
+  const data=mesFilter==='all'?MEET_PIPE:MEET_PIPE.filter(r=>{
+    // Si tiene mes de contacto, comparar directamente
+    if(r.mes) return r.mes===mesFilter;
+    // Si tiene goLive, calcular su mes
+    if(r.goLive){
+      const p=r.goLive.split('/');
+      if(p.length===3){
+        const m=parseInt(p[1]).toString().padStart(2,'0');
+        const y=p[2].length===2?'20'+p[2]:p[2];
+        return `${y}-${m}`===mesFilter;
+      }
+    }
+    // Sin fecha → mostrar en todos los meses
+    return true;
+  });
   PIPE_STAGES.forEach(stage=>{
-    const sellers=MEET_PIPE.filter(r=>stage.sts.includes(r.st));
+    const sellers=data.filter(r=>stage.sts.includes(r.st));
     const col=document.createElement('div');
     col.style.cssText=`background:${stage.bg};border-radius:10px;padding:12px;border-top:4px solid ${stage.color};min-width:180px`;
     col.innerHTML=`
